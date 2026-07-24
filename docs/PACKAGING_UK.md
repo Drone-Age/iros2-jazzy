@@ -1,0 +1,44 @@
+# Архітектура пакета IROS2 Jazzy
+
+Репозиторій містить build recipe, manifest, patches, package metadata, тести
+та документацію. Upstream-код отримується через офіційний `ros2.repos`.
+
+## Пакет
+
+```text
+Package: iros2-jazzy
+Architecture: arm64
+Install prefix: /opt/iros2/jazzy
+```
+
+Версія:
+
+```text
+<IROS2_VERSION>-<DEBIAN_REVISION>+deb13
+```
+
+Приклад: `0.1.0-1+deb13`.
+
+## Залежність VINS-NEO
+
+Після стабілізації:
+
+```text
+Depends: iros2-jazzy (>= 0.1.0-1+deb13)
+```
+
+Системні runtime dependencies повинні бути визначені через ELF dependency
+scan. Поточний `control.in` є bootstrap-варіантом і не готовий до production,
+доки список залежностей не перевірено.
+
+## Критерії release
+
+1. Upstream repositories зафіксовані commit SHA.
+2. Base image зафіксований digest.
+3. Усі patches збережені в Git.
+4. Версії build dependencies записані.
+5. Збережені build log, SHA-256 та SBOM.
+6. Пакет перевірений на чистому Raspberry Pi.
+
+Версія `0.1.0` призначена для виявлення сумісності Jazzy з Debian 13 Trixie
+ARM64 і не є production release.

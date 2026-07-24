@@ -1,0 +1,7 @@
+artifacts/
+build/
+sources/
+*.log
+*.tar
+*.deb
+*.sha256
