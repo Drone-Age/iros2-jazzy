@@ -9,7 +9,6 @@ ENV LANG=C.UTF-8 \
     ROS_DISTRO=${ROS_DISTRO} \
     PATH=/opt/iros2_0-build-venv/bin:${PATH}
 
-COPY requirements-build.txt /tmp/requirements-build.txt
 RUN apt-get update && apt-get install -y --no-install-recommends \
       build-essential \
       ca-certificates \
@@ -36,15 +35,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       python3-venv \
       python3-yaml \
     && python3 -m venv /opt/iros2_0-build-venv \
-    && /opt/iros2_0-build-venv/bin/pip install \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements-build.txt /tmp/requirements-build.txt
+RUN /opt/iros2_0-build-venv/bin/pip install \
       --no-cache-dir \
-      -r /tmp/requirements-build.txt \
+      -r /tmp/requirements-build.txt
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends colcon \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /work
-
-COPY scripts/container/ /usr/local/lib/iros2_0/
-RUN chmod +x /usr/local/lib/iros2_0/*.sh
 
 FROM environment AS source
 
@@ -55,8 +57,13 @@ RUN mkdir -p /work/src \
 
 FROM source AS dependencies
 
-RUN rosdep init \
+COPY scripts/container/install-dependencies.sh /usr/local/lib/iros2_0/
+RUN chmod +x /usr/local/lib/iros2_0/install-dependencies.sh
+RUN if [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then \
+      rosdep init; \
+    fi \
     && rosdep update \
+    && apt-get update \
     && /usr/local/lib/iros2_0/install-dependencies.sh
 
 FROM dependencies AS build
@@ -68,11 +75,15 @@ ENV IROS2_VERSION=${IROS2_VERSION} \
     BUILD_DATE=${BUILD_DATE} \
     VCS_REF=${VCS_REF}
 
+COPY scripts/container/build-ros.sh /usr/local/lib/iros2_0/
+RUN chmod +x /usr/local/lib/iros2_0/build-ros.sh
 RUN /usr/local/lib/iros2_0/build-ros.sh
 
 FROM build AS package
 
 COPY packaging/ /work/packaging/
+COPY scripts/container/build-deb.sh /usr/local/lib/iros2_0/
+RUN chmod +x /usr/local/lib/iros2_0/build-deb.sh
 RUN /usr/local/lib/iros2_0/build-deb.sh
 
 FROM scratch AS artifact
