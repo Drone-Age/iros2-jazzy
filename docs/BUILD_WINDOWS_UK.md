@@ -1,6 +1,6 @@
-# Ручна збірка IROS2 Jazzy у Windows 11
+# Ручна збірка IROS2_0 у Windows 11
 
-Усі команди виконуються у PowerShell з кореня `iros2-jazzy`.
+Усі команди виконуються у PowerShell з кореня `iros2_0`.
 
 ## 1. Передумови
 
@@ -17,8 +17,8 @@
 ## 2. Отримання репозиторію
 
 ```powershell
-git clone https://github.com/Drone-Age/iros2-jazzy.git
-Set-Location iros2-jazzy
+git clone https://github.com/Drone-Age/iros2_0.git
+Set-Location iros2_0
 git status
 ```
 
@@ -51,7 +51,7 @@ docker buildx inspect --bootstrap
 docker buildx build `
   --platform linux/arm64 `
   --target environment `
-  --tag iros2-jazzy:build-environment `
+  --tag iros2-0:build-environment `
   --load `
   .
 ```
@@ -107,7 +107,7 @@ docker buildx build `
   .
 ```
 
-Install prefix: `/opt/iros2/jazzy`. Збірка: `Release`, `BUILD_TESTING=OFF`,
+Install prefix: `/opt/iros2_0/jazzy`. Збірка: `Release`, `BUILD_TESTING=OFF`,
 `--merge-install`, `--executor sequential`.
 
 ## 8. DEB-пакет
@@ -138,7 +138,7 @@ docker buildx build `
 
 ```text
 artifacts/
-├── iros2-jazzy_0.1.0-1+deb13_arm64.deb
+├── iros2-0_0.1.0-1+deb13_arm64.deb
 └── SHA256SUMS
 ```
 

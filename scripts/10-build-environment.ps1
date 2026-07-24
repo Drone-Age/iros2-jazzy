@@ -3,10 +3,10 @@ $ErrorActionPreference = "Stop"
 docker buildx build `
     --platform linux/arm64 `
     --target environment `
-    --tag iros2-jazzy:build-environment `
+    --tag iros2-0:build-environment `
     --load `
     .
 
 if ($LASTEXITCODE -ne 0) {
-    throw "IROS2 build environment failed."
+    throw "IROS2_0 build environment failed."
 }

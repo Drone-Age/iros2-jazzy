@@ -15,7 +15,7 @@ if ($LASTEXITCODE -ne 0) {
     throw "Unable to inspect the active Buildx builder."
 }
 
-if ($builder -notmatch "linux/arm64") {
+if (($builder -join "`n") -notmatch "linux/arm64") {
     throw "The active Buildx builder does not advertise linux/arm64."
 }
 

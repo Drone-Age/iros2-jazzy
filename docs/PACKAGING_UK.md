@@ -1,4 +1,4 @@
-# Архітектура пакета IROS2 Jazzy
+# Архітектура пакета IROS2_0
 
 Репозиторій містить build recipe, manifest, patches, package metadata, тести
 та документацію. Upstream-код отримується через офіційний `ros2.repos`.
@@ -6,9 +6,9 @@
 ## Пакет
 
 ```text
-Package: iros2-jazzy
+Package: iros2-0
 Architecture: arm64
-Install prefix: /opt/iros2/jazzy
+Install prefix: /opt/iros2_0/jazzy
 ```
 
 Версія:
@@ -24,7 +24,7 @@ Install prefix: /opt/iros2/jazzy
 Після стабілізації:
 
 ```text
-Depends: iros2-jazzy (>= 0.1.0-1+deb13)
+Depends: iros2-0 (>= 0.1.0-1+deb13)
 ```
 
 Системні runtime dependencies повинні бути визначені через ELF dependency

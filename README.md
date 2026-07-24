@@ -1,4 +1,4 @@
-# IROS2 Jazzy
+# IROS2_0
 
 Відтворювана збірка ROS 2 Jazzy для Raspberry Pi 5 з Debian 13 Trixie.
 
@@ -8,7 +8,7 @@
 | Build container | Debian 13 Trixie |
 | Target | Raspberry Pi 5, ARM64 (`aarch64`) |
 | ROS distribution | Jazzy |
-| Артефакт | `iros2-jazzy_<version>_arm64.deb` |
+| Артефакт | `iros2-0_<version>_arm64.deb` |
 
 > ROS 2 Jazzy офіційно постачається для Ubuntu 24.04. Збірка для Debian 13 є
 > власним портом INDRA і повинна пройти повний compatibility та runtime test

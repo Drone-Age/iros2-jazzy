@@ -26,7 +26,7 @@ docker run --rm `
     --platform linux/arm64 `
     --mount "type=bind,source=$artifactPath,target=/artifacts,readonly" `
     debian:trixie-slim `
-    bash -lc "apt-get update && apt-get install -y /artifacts/*.deb && source /opt/iros2/jazzy/setup.bash && test `$ROS_DISTRO = jazzy && ros2 --help >/dev/null"
+    bash -lc "apt-get update && apt-get install -y /artifacts/*.deb && source /opt/iros2_0/jazzy/setup.bash && test `$ROS_DISTRO = jazzy && ros2 --help >/dev/null"
 
 if ($LASTEXITCODE -ne 0) {
     throw "Package installation or ROS 2 smoke-test failed."

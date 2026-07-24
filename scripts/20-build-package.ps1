@@ -20,7 +20,7 @@ docker buildx build `
     .
 
 if ($LASTEXITCODE -ne 0) {
-    throw "IROS2 package build failed."
+    throw "IROS2_0 package build failed."
 }
 
 Get-ChildItem -LiteralPath $OutputDirectory
