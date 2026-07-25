@@ -1,5 +1,8 @@
 # IROS2_0
 
+> Release v0.1.1 is built natively on Raspberry Pi 5. Runtime activation:
+> [docs/V0.1.1_RUNTIME_UK.md](docs/V0.1.1_RUNTIME_UK.md).
+
 Відтворювана збірка ROS 2 Jazzy для Raspberry Pi 5 з Debian 13 Trixie.
 
 | Параметр | Значення |
