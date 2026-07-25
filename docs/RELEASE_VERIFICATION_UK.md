@@ -38,7 +38,9 @@ base="https://github.com/${IROS2_GITHUB_REPO}/releases/download/${IROS2_RELEASE_
 asset="iros2-0_${IROS2_PACKAGE_VERSION}_arm64.deb"
 curl -fLO "${base}/${asset}"
 curl -fLO "${base}/SHA256SUMS"
-grep -F " ${asset}" SHA256SUMS | sha256sum -c -
+awk -v asset="${asset}" \
+  '$2 == asset || $2 == "./" asset {print $1 "  " asset}' \
+  SHA256SUMS | sha256sum -c -
 ```
 
 На чистій тестовій системі встановіть пакет:

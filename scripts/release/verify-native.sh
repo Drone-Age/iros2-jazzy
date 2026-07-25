@@ -49,9 +49,11 @@ source /etc/os-release
 if [[ "${verify_installed_only}" != "1" ]]; then
   curl -fL "${release_url}/${asset}" -o "${work_dir}/${asset}"
   curl -fL "${release_url}/SHA256SUMS" -o "${work_dir}/SHA256SUMS"
-  (
-    cd "${work_dir}"
-    grep -F " ${asset}" SHA256SUMS | sha256sum -c -
+(
+  cd "${work_dir}"
+    awk -v asset="${asset}" '
+      $2 == asset || $2 == "./" asset {print $1 "  " asset}
+    ' SHA256SUMS | sha256sum -c -
   )
 
   if dpkg-query -W -f='${db:Status-Status}' iros2-0 2>/dev/null |

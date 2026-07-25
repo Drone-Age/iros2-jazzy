@@ -62,4 +62,4 @@ dpkg-deb --build --root-owner-group \
   "${output_dir}/iros2-0_${package_version}_${package_arch}.deb"
 
 cd "${output_dir}"
-sha256sum ./*.deb > SHA256SUMS
+sha256sum -- *.deb > SHA256SUMS

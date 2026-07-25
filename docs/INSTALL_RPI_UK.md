@@ -30,7 +30,9 @@ curl -fLO "${base}/SHA256SUMS"
 ## Встановлення
 
 ```bash
-grep -F " ${asset}" SHA256SUMS | sha256sum -c -
+awk -v asset="${asset}" \
+  '$2 == asset || $2 == "./" asset {print $1 "  " asset}' \
+  SHA256SUMS | sha256sum -c -
 sudo apt update
 sudo apt install "./${asset}"
 ```
