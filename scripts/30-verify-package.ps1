@@ -1,35 +1,11 @@
-param(
-    [string]$ArtifactDirectory = "artifacts"
-)
-
 $ErrorActionPreference = "Stop"
-$artifactPath = (Resolve-Path -LiteralPath $ArtifactDirectory).Path
-$packages = @(Get-ChildItem -LiteralPath $artifactPath -Filter "*.deb")
 
-if ($packages.Count -ne 1) {
-    throw "Expected exactly one DEB package in $artifactPath."
-}
+Write-Warning @"
+Release verification is native-only. This entry point now delegates to the
+SSH/native verifier and does not start Docker.
+"@
 
-Push-Location $artifactPath
-try {
-    $expected = (Get-Content SHA256SUMS -Raw).Split(" ")[0].Trim()
-    $actual = (Get-FileHash -Algorithm SHA256 $packages[0].FullName).Hash.ToLowerInvariant()
-    if ($expected -ne $actual) {
-        throw "SHA-256 verification failed."
-    }
-}
-finally {
-    Pop-Location
-}
-
-docker run --rm `
-    --platform linux/arm64 `
-    --mount "type=bind,source=$artifactPath,target=/artifacts,readonly" `
-    debian:trixie-slim `
-    bash -lc "apt-get update && apt-get install -y /artifacts/*.deb && source /opt/iros2_0/jazzy/setup.bash && test `$ROS_DISTRO = jazzy && ros2 --help >/dev/null"
-
+& (Join-Path $PSScriptRoot "release\verify-via-ssh.ps1")
 if ($LASTEXITCODE -ne 0) {
-    throw "Package installation or ROS 2 smoke-test failed."
+    throw "Native release verification via SSH failed."
 }
-
-Write-Host "Package checksum, installation and ROS 2 smoke-test passed."

@@ -20,8 +20,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       locales \
       ninja-build \
       python3-colcon-cmake \
+      python3-colcon-bash \
       python3-colcon-core \
       python3-colcon-output \
+      python3-colcon-package-information \
       python3-colcon-package-selection \
       python3-colcon-python-setup-py \
       python3-colcon-recursive-crawl \
@@ -34,7 +36,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       python3-setuptools \
       python3-venv \
       python3-yaml \
-    && python3 -m venv /opt/iros2_0-build-venv \
+    && python3 -m venv --system-site-packages /opt/iros2_0-build-venv \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements-build.txt /tmp/requirements-build.txt
@@ -53,7 +55,9 @@ FROM environment AS source
 ARG ROS2_REPOS_URL=https://raw.githubusercontent.com/ros2/ros2/jazzy/ros2.repos
 RUN mkdir -p /work/src \
     && curl -fsSL "${ROS2_REPOS_URL}" -o /work/ros2.repos \
-    && vcs import --input /work/ros2.repos /work/src
+    && vcs import --input /work/ros2.repos /work/src \
+    && git clone --branch jazzy --depth 1 \
+      https://github.com/ros2/variants.git /work/src/ros2/variants
 
 FROM source AS dependencies
 
@@ -68,18 +72,20 @@ RUN if [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then \
 
 FROM dependencies AS build
 
+COPY scripts/container/build-ros.sh /usr/local/lib/iros2_0/
+RUN chmod +x /usr/local/lib/iros2_0/build-ros.sh
+RUN --mount=type=cache,id=iros2_0-jazzy-arm64-build,target=/work/build,sharing=locked \
+    --mount=type=cache,id=iros2_0-jazzy-arm64-log,target=/work/log,sharing=locked \
+    /usr/local/lib/iros2_0/build-ros.sh
+
+FROM build AS package
+
 ARG IROS2_VERSION=0.1.0
 ARG BUILD_DATE=unknown
 ARG VCS_REF=unknown
 ENV IROS2_VERSION=${IROS2_VERSION} \
     BUILD_DATE=${BUILD_DATE} \
     VCS_REF=${VCS_REF}
-
-COPY scripts/container/build-ros.sh /usr/local/lib/iros2_0/
-RUN chmod +x /usr/local/lib/iros2_0/build-ros.sh
-RUN /usr/local/lib/iros2_0/build-ros.sh
-
-FROM build AS package
 
 COPY packaging/ /work/packaging/
 COPY scripts/container/build-deb.sh /usr/local/lib/iros2_0/

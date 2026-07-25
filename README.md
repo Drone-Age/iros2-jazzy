@@ -18,6 +18,7 @@
 
 - [Повна ручна збірка у Windows 11](docs/BUILD_WINDOWS_UK.md)
 - [Встановлення на Raspberry Pi](docs/INSTALL_RPI_UK.md)
+- [Регламент перевірки релізу](docs/RELEASE_VERIFICATION_UK.md)
 - [Архітектура пакета і release-процес](docs/PACKAGING_UK.md)
 
 ## Швидкий початок

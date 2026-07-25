@@ -70,7 +70,8 @@ Dockerfile завантажує офіційний Jazzy manifest:
 https://raw.githubusercontent.com/ros2/ros2/jazzy/ros2.repos
 ```
 
-Потім `vcs import` отримує upstream repositories.
+Потім `vcs import` отримує upstream repositories, а офіційний
+`ros2/variants` гілки Jazzy додає метапакет `ros_base`.
 
 ```powershell
 docker buildx build `
@@ -107,8 +108,9 @@ docker buildx build `
   .
 ```
 
-Install prefix: `/opt/iros2_0/jazzy`. Збірка: `Release`, `BUILD_TESTING=OFF`,
-`--merge-install`, `--executor sequential`.
+Install prefix: `/opt/iros2_0/jazzy`. Профіль: `ros_base + rviz2`, без Gazebo
+Simulator. Збірка: `Release`, `BUILD_TESTING=OFF`, isolated install,
+`--executor sequential`.
 
 ## 8. DEB-пакет
 
@@ -144,12 +146,15 @@ artifacts/
 
 ## 9. Перевірка
 
+Release-перевірки не виконуються в Docker. Після публікації GitHub Release
+запустіть native acceptance cycle на Raspberry Pi безпосередньо або через
+SSH:
+
 ```powershell
-.\scripts\30-verify-package.ps1
+.\scripts\release\verify-via-ssh.ps1
 ```
 
-Перевіряються checksum, інсталяція через APT у чистому Debian Trixie ARM64 та
-запуск ROS CLI.
+Див. [регламент перевірки релізу](RELEASE_VERIFICATION_UK.md).
 
 ## 10. Публікація
 

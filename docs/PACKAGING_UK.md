@@ -38,7 +38,13 @@ scan. Поточний `control.in` є bootstrap-варіантом і не го
 3. Усі patches збережені в Git.
 4. Версії build dependencies записані.
 5. Збережені build log, SHA-256 та SBOM.
-6. Пакет перевірений на чистому Raspberry Pi.
+6. Пакет завантажений з GitHub Release і встановлений на чистому Raspberry Pi.
+7. `ros2` перевірений у новому login-shell.
+8. RViz перевірений у новому GUI login-shell.
+9. Пройдено SSH/offscreen smoke-test.
+
+Повний acceptance-процес описаний у
+[регламенті перевірки релізу](RELEASE_VERIFICATION_UK.md).
 
 Версія `0.1.0` призначена для виявлення сумісності Jazzy з Debian 13 Trixie
 ARM64 і не є production release.
