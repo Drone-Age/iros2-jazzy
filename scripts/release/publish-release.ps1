@@ -55,8 +55,12 @@ if ($LASTEXITCODE -ne 0) {
     throw "GitHub CLI is not authenticated."
 }
 
+$previousErrorActionPreference = $ErrorActionPreference
+$ErrorActionPreference = "SilentlyContinue"
 & $gh release view $tag --repo $Repository *> $null
-if ($LASTEXITCODE -eq 0) {
+$releaseViewExitCode = $LASTEXITCODE
+$ErrorActionPreference = $previousErrorActionPreference
+if ($releaseViewExitCode -eq 0) {
     throw "Release $tag already exists."
 }
 
