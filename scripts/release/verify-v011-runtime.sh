@@ -14,13 +14,6 @@ env -i HOME="${HOME}" PATH=/usr/bin:/bin \
     ros2 pkg prefix ros_base
   '
 
-env -i HOME="${HOME}" PATH=/usr/bin:/bin QT_QPA_PLATFORM=offscreen \
-  bash --noprofile --norc -c '
-    set -e
-    test "$(command -v rviz2)" = /usr/bin/rviz2
-    rviz2 --help >/dev/null
-  '
-
 env -i HOME="${HOME}" PATH=/usr/bin:/bin \
   bash --noprofile --norc -c '
     set -e

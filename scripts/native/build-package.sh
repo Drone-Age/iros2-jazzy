@@ -21,3 +21,14 @@ VCS_REF="${VCS_REF:-$(git -C "${repo_root}" rev-parse HEAD)}" \
   bash "${repo_root}/scripts/container/build-deb.sh"
 
 echo "Native ARM64 package created in ${output_dir}"
+
+if [[ "${IROS2_CLEAN_AFTER_PACKAGE:-1}" == "1" ]]; then
+  workspace="${IROS2_WORKSPACE:-$HOME/iros2_0-native/work}"
+  if [[ -d "${workspace}/log" ]]; then
+    tar -C "${workspace}" -czf \
+      "${output_dir}/native-build-logs_${version}.tar.gz" \
+      log
+  fi
+  bash "${repo_root}/scripts/native/cleanup-build.sh" \
+    "${workspace}"
+fi

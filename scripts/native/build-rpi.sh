@@ -18,7 +18,7 @@ fi
 command -v vcs >/dev/null
 
 selection_args=(--packages-up-to ros_base rviz2)
-if [[ "${IROS2_RESUME_BUILD:-0}" == "1" ]]; then
+if [[ "${IROS2_RESUME_BUILD:-1}" == "1" ]]; then
   selection_args=(--packages-skip-build-finished "${selection_args[@]}")
 fi
 
@@ -36,7 +36,8 @@ on_exit() {
 trap on_exit EXIT
 
 colcon build \
-  --executor sequential \
+  --executor parallel \
+  --parallel-workers "${IROS2_PARALLEL_WORKERS:-2}" \
   "${selection_args[@]}" \
   "${cmake_cache_args[@]}" \
   --install-base "${install_base}" \
