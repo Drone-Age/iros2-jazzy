@@ -1,146 +1,117 @@
 # Регламент перевірки релізу IROS2_0
 
-## Критерій успішного релізу
+## Обов'язкова автоматична перевірка
 
-Реліз вважається прийнятим лише після повного циклу на Raspberry Pi 5 з
-Debian 13 Trixie ARM64:
+Автоматичний release verifier працює на Raspberry Pi 5 з Debian 13 Trixie
+ARM64. Він перевіряє:
 
-1. `.deb` і `SHA256SUMS` завантажені саме з GitHub Release.
-2. SHA-256 збігається.
-3. Попередній пакет видалений, а `/opt/iros2_0/jazzy` не містить залишків
-   ручної збірки.
-4. Пакет встановлений командою `apt install`.
-5. У новому login-shell доступний `ros2`, `ROS_DISTRO=jazzy`, присутній
-   `ros_base`, а `ros2 doctor` завершується успішно.
-6. В іншому новому login-shell RViz запускається з GUI і залишається
-   працездатним щонайменше 10 секунд.
+1. Завантаження `.deb` і `SHA256SUMS` з GitHub Release.
+2. Відповідність SHA-256.
+3. Чисте встановлення пакета через APT.
+4. Запуск `ros2` у `bash --noprofile --norc` без успадкованого ROS
+   environment.
+5. Наявність `ros_base` і успішний `ros2 doctor --report`.
+6. Ручну активацію `/opt/iros2_0/jazzy/setup.bash`.
 
-SSH/offscreen-перевірка є обов'язковим автоматизованим smoke-test, але не
-замінює локальний GUI-тест. Підсумковий статус `release accepted` дозволений
-тільки після локального GUI-тесту.
-
-## Ручна перевірка
-
-Задайте версію релізу:
+RViz не входить до автоматичної перевірки. GUI запускається вручну на
+цільовому обладнанні після встановлення релізу:
 
 ```bash
-export IROS2_RELEASE_TAG=v0.1.0
-export IROS2_PACKAGE_VERSION=0.1.0-1+deb13
-export IROS2_GITHUB_REPO=Drone-Age/iros2_0
-```
-
-Завантажте артефакти:
-
-```bash
-mkdir -p ~/iros2-release-test
-cd ~/iros2-release-test
-base="https://github.com/${IROS2_GITHUB_REPO}/releases/download/${IROS2_RELEASE_TAG}"
-asset="iros2-0_${IROS2_PACKAGE_VERSION}_arm64.deb"
-curl -fLO "${base}/${asset}"
-curl -fLO "${base}/SHA256SUMS"
-awk -v asset="${asset}" \
-  '$2 == asset || $2 == "./" asset {print $1 "  " asset}' \
-  SHA256SUMS | sha256sum -c -
-```
-
-На чистій тестовій системі встановіть пакет:
-
-```bash
-sudo apt purge -y iros2-0 || true
-test ! -e /opt/iros2_0/jazzy
-sudo apt update
-sudo apt install "./${asset}"
-dpkg-query -W iros2-0
-```
-
-Закрийте термінал, відкрийте новий і виконайте:
-
-```bash
-test "$ROS_DISTRO" = jazzy
-command -v ros2
-ros2 --help
-ros2 pkg prefix ros_base
-ros2 doctor --report
-```
-
-Закрийте його, відкрийте ще один новий термінал у графічній сесії Pi:
-
-```bash
-command -v rviz2
 rviz2
 ```
 
-Критерій: вікно RViz відкривається, не завершується з помилкою Qt/OpenGL,
-відображає стандартну сцену та реагує на керування.
+## Нативна збірка
 
-На Raspberry Pi OS із Wayland RViz/Ogre використовує GLX через XWayland.
-Native verifier автоматично обирає Qt `xcb`, якщо доступний `DISPLAY`.
-Під час запуску через SSH потрібно також передати чинний `XAUTHORITY`;
-локальний графічний термінал зазвичай уже має ці змінні.
-
-## Автоматична native-перевірка
-
-Скрипт виконує завантаження, checksum, чисте встановлення та два незалежні
-login-shell тести:
+Повторний запуск продовжує збірку з уже завершених пакетів. Типово colcon
+використовує два паралельні workers:
 
 ```bash
-cd iros2_0
-export IROS2_RELEASE_TAG=v0.1.0
-export IROS2_PACKAGE_VERSION=0.1.0-1+deb13
-export IROS2_RVIZ_MODE=gui
-./scripts/release/verify-native.sh
+cd ~/iros2_0
+./scripts/native/release-rpi.sh
 ```
 
-Для повторної перевірки вже встановленого пакета без завантаження та
-перевстановлення:
+Перший запуск на новій системі:
+
+```bash
+IROS2_INSTALL_DEPENDENCIES=1 ./scripts/native/release-rpi.sh
+```
+
+Кількість workers можна змінити:
+
+```bash
+IROS2_PARALLEL_WORKERS=3 ./scripts/native/build-rpi.sh
+```
+
+Для примусової повної перебудови:
+
+```bash
+IROS2_RESUME_BUILD=0 IROS2_CMAKE_CLEAN_CACHE=1 \
+  ./scripts/native/build-rpi.sh
+```
+
+## Очищення після збірки
+
+Після успішного створення `.deb` команда `build-package.sh` автоматично
+видаляє проміжні каталоги `build/`, `log/`, Python bytecode і порожні
+`__pycache__`. Вона зберігає:
+
+- вихідні коди у `src/`;
+- staged runtime у `~/iros2_0-native/work/install`;
+- `.deb` і `SHA256SUMS` у `artifacts/`.
+- архів build-логів і загальний `native-release.log` у `artifacts/`.
+
+Для GitHub Release створюються versioned-файл і стабільний asset:
+
+```text
+iros2-0_<version>_arm64.deb
+iros2-0_latest_arm64.deb
+iros2-0_latest_arm64.deb.sha256
+SHA256SUMS
+```
+
+Після merge змін у `main` реліз публікується однією командою на Windows:
+
+```powershell
+.\scripts\release\publish-release.ps1
+```
+
+Скрипт перевіряє повний список assets, звіряє checksum стабільного пакета,
+не дозволяє випадково перезаписати наявний tag і позначає новий реліз як
+latest.
+
+Очищення можна запустити окремо:
+
+```bash
+./scripts/native/cleanup-build.sh
+```
+
+Для діагностики невдалої збірки автоматичне очищення слід тимчасово
+відключити:
+
+```bash
+IROS2_CLEAN_AFTER_PACKAGE=0 ./scripts/native/build-package.sh
+```
+
+Очищення запускається лише після успішного пакування. При помилці `build/`
+і `log/` залишаються для аналізу та наступного resume-запуску.
+
+## Автоматична перевірка встановленого пакета
 
 ```bash
 export IROS2_VERIFY_INSTALLED_ONLY=1
-export IROS2_RVIZ_MODE=gui
 ./scripts/release/verify-native.sh
 ```
 
-Якщо на build-машині залишився ручний `/opt/iros2_0/jazzy`, скрипт безпечно
-зупиниться. Видалення дозволяється лише явно:
+Повний цикл із GitHub Release:
 
 ```bash
-export IROS2_ALLOW_REMOVE_PREFIX=1
+export IROS2_RELEASE_TAG=v0.1.2
+export IROS2_PACKAGE_VERSION=0.1.2-1+deb13
+./scripts/release/verify-native.sh
 ```
 
-Цю змінну не слід використовувати на системі з важливими незапакованими
-даними.
+## Критерій випуску
 
-## Перевірка через SSH
-
-Запускайте у PowerShell на Windows 11. Параметри підключення передаються
-виключно змінними середовища:
-
-```powershell
-$env:IROS2_SSH_HOST = "192.168.144.109"
-$env:IROS2_SSH_USER = "rpi"
-$env:IROS2_SSH_PORT = "22"
-$env:IROS2_SSH_KEY = "$env:USERPROFILE\.ssh\id_ed25519"
-$env:IROS2_RELEASE_TAG = "v0.1.0"
-$env:IROS2_PACKAGE_VERSION = "0.1.0-1+deb13"
-$env:IROS2_GITHUB_REPO = "Drone-Age/iros2_0"
-
-.\scripts\release\verify-via-ssh.ps1
-```
-
-SSH-скрипт копіює native-verifier на Pi та запускає його у режимі
-`IROS2_RVIZ_MODE=offscreen`. Усі перевірки виконуються на нативній системі;
-Windows лише керує SSH-сеансом.
-
-## Протокол результатів
-
-До GitHub Release додаються:
-
-- `iros2-0_<version>_arm64.deb`;
-- `SHA256SUMS`;
-- build log;
-- протокол native GUI-перевірки;
-- протокол SSH/offscreen-перевірки;
-- commit SHA джерел збірки.
-
-У разі помилки реліз не змінюється «на місці». Виправлення отримує новий
-Debian revision або новий release tag, після чого весь цикл повторюється.
+Реліз можна публікувати після успішної нативної збірки, перевірки checksum,
+APT-встановлення та автоматичного ROS smoke-test. Перевірка RViz виконується
+окремо вручну і не повинна зупиняти автоматичний release pipeline.

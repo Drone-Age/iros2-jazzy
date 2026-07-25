@@ -1,38 +1,97 @@
 # IROS2_0
 
-> Release v0.1.1 is built natively on Raspberry Pi 5. Runtime activation:
-> [docs/V0.1.1_RUNTIME_UK.md](docs/V0.1.1_RUNTIME_UK.md).
+IROS2_0 — готовий пакет ROS 2 Jazzy для Raspberry Pi 5 з Debian 13
+Trixie ARM64. Після встановлення команди `ros2` і `rviz2` доступні у
+звичайному терміналі без ручного налаштування середовища.
 
-Відтворювана збірка ROS 2 Jazzy для Raspberry Pi 5 з Debian 13 Trixie.
+## Системні вимоги
 
-| Параметр | Значення |
-|---|---|
-| Build host | Windows 11 + Docker Desktop |
-| Build container | Debian 13 Trixie |
-| Target | Raspberry Pi 5, ARM64 (`aarch64`) |
-| ROS distribution | Jazzy |
-| Артефакт | `iros2-0_<version>_arm64.deb` |
+- Raspberry Pi 5;
+- Debian 13 Trixie ARM64;
+- доступ до інтернету;
+- команди `curl`, `sudo` та `apt`.
 
-> ROS 2 Jazzy офіційно постачається для Ubuntu 24.04. Збірка для Debian 13 є
-> власним портом INDRA і повинна пройти повний compatibility та runtime test
-> перед використанням на кінцевому обладнанні.
+Перевірити систему:
 
-## Документація
-
-- [Повна ручна збірка у Windows 11](docs/BUILD_WINDOWS_UK.md)
-- [Встановлення на Raspberry Pi](docs/INSTALL_RPI_UK.md)
-- [Регламент перевірки релізу](docs/RELEASE_VERIFICATION_UK.md)
-- [Архітектура пакета і release-процес](docs/PACKAGING_UK.md)
-
-## Швидкий початок
-
-У PowerShell:
-
-```powershell
-.\scripts\00-check-host.ps1
-.\scripts\10-build-environment.ps1
-.\scripts\20-build-package.ps1
-.\scripts\30-verify-package.ps1
+```bash
+uname -m
+. /etc/os-release
+printf '%s %s\n' "$ID" "$VERSION_CODENAME"
 ```
 
-Результати створюються в `artifacts/` і не зберігаються в Git.
+Очікуваний результат: архітектура `aarch64` та система `debian trixie`.
+
+## Швидке встановлення останнього релізу
+
+Виконайте в терміналі:
+
+```bash
+mkdir -p /tmp/iros2-install
+cd /tmp/iros2-install
+
+curl -fLO "https://github.com/Drone-Age/iros2_0/releases/latest/download/iros2-0_latest_arm64.deb"
+curl -fLO "https://github.com/Drone-Age/iros2_0/releases/latest/download/iros2-0_latest_arm64.deb.sha256"
+
+sha256sum -c iros2-0_latest_arm64.deb.sha256
+
+sudo apt update
+sudo apt install ./iros2-0_latest_arm64.deb
+```
+
+Під час встановлення APT автоматично додасть необхідні системні залежності.
+
+## Перевірка
+
+```bash
+ros2 --help
+rviz2
+```
+
+Для перевірки встановленої версії:
+
+```bash
+dpkg-query -W iros2-0
+```
+
+## Використання
+
+Для звичайного запуску використовуйте `ros2` і `rviz2` без додаткових
+команд:
+
+```bash
+ros2 topic list
+rviz2
+```
+
+Для розробки, `colcon` workspace або ROS overlay активуйте повне середовище:
+
+```bash
+source /opt/iros2_0/jazzy/setup.bash
+```
+
+За бажанням можна один раз увімкнути автоматичну активацію для свого
+Bash-користувача:
+
+```bash
+iros2-enable-bash
+```
+
+## Видалення
+
+```bash
+sudo apt purge iros2-0
+sudo apt autoremove
+```
+
+Якщо раніше виконувалась команда `iros2-enable-bash`, видаліть із
+`~/.bashrc` блок між рядками:
+
+```text
+# >>> iros2-0 >>>
+# <<< iros2-0 <<<
+```
+
+## Релізи
+
+Остання опублікована версія доступна на сторінці
+[GitHub Releases](https://github.com/Drone-Age/iros2_0/releases/latest).

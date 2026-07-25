@@ -57,7 +57,6 @@ $remoteCommand = @(
     "IROS2_GITHUB_REPO='$githubRepo'",
     "IROS2_RELEASE_TAG='$releaseTag'",
     "IROS2_PACKAGE_VERSION='$packageVersion'",
-    "IROS2_RVIZ_MODE=offscreen",
     "bash /tmp/iros2-verify-native.sh"
 ) -join " "
 

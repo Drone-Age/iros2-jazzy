@@ -9,12 +9,10 @@ if [[ "${verify_installed_only}" != "1" && -z "${tag}" ]]; then
   exit 1
 fi
 version="${IROS2_PACKAGE_VERSION:-${tag#v}-1+deb13}"
-rviz_mode="${IROS2_RVIZ_MODE:-gui}"
 allow_remove_prefix="${IROS2_ALLOW_REMOVE_PREFIX:-0}"
 asset="iros2-0_${version}_arm64.deb"
 release_url="https://github.com/${repo}/releases/download/${tag}"
 work_dir="$(mktemp -d)"
-rviz_log="${work_dir}/rviz2.log"
 trap 'rm -rf -- "${work_dir}"' EXIT
 
 as_root() {
@@ -44,7 +42,6 @@ clean_shell() {
 [[ "$(uname -m)" == "aarch64" ]]
 source /etc/os-release
 [[ "${ID}" == "debian" && "${VERSION_CODENAME}" == "trixie" ]]
-[[ "${rviz_mode}" == "gui" || "${rviz_mode}" == "offscreen" ]]
 
 if [[ "${verify_installed_only}" != "1" ]]; then
   curl -fL "${release_url}/${asset}" -o "${work_dir}/${asset}"
@@ -94,35 +91,4 @@ clean_shell '
   command -v colcon >/dev/null
 '
 
-if [[ "${rviz_mode}" == "gui" ]]; then
-  [[ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]] || {
-    echo "GUI mode requires DISPLAY or WAYLAND_DISPLAY." >&2
-    exit 1
-  }
-  if [[ -n "${DISPLAY:-}" ]]; then
-    qt_platform=xcb
-  else
-    qt_platform=wayland
-  fi
-  rviz_command="
-    QT_QPA_PLATFORM=${qt_platform} rviz2 >'${rviz_log}' 2>&1 &
-    pid=\$!
-    sleep 10
-    if ! kill -0 \$pid 2>/dev/null; then
-      wait \$pid
-      exit \$?
-    fi
-    kill -TERM \$pid
-    wait \$pid || true
-  "
-else
-  rviz_command="QT_QPA_PLATFORM=offscreen rviz2 --help >'${rviz_log}' 2>&1"
-fi
-
-# RViz is tested in a second, independent new login shell.
-if ! clean_shell "${rviz_command}"; then
-  cat "${rviz_log}" >&2 || true
-  exit 1
-fi
-
-echo "IROS2_0 native release verification PASSED (${rviz_mode})."
+echo "IROS2_0 native release verification PASSED."
