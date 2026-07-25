@@ -105,8 +105,8 @@ export IROS2_VERIFY_INSTALLED_ONLY=1
 Повний цикл із GitHub Release:
 
 ```bash
-export IROS2_RELEASE_TAG=v0.1.1
-export IROS2_PACKAGE_VERSION=0.1.1-1+deb13
+export IROS2_RELEASE_TAG=v0.1.2
+export IROS2_PACKAGE_VERSION=0.1.2-1+deb13
 ./scripts/release/verify-native.sh
 ```
 
