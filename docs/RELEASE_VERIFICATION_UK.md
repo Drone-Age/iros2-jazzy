@@ -56,7 +56,7 @@ IROS2_RESUME_BUILD=0 IROS2_CMAKE_CLEAN_CACHE=1 \
 `__pycache__`. Вона зберігає:
 
 - вихідні коди у `src/`;
-- встановлений runtime у `/opt/iros2_0/jazzy`;
+- staged runtime у `~/iros2_0-native/work/install`;
 - `.deb` і `SHA256SUMS` у `artifacts/`.
 - архів build-логів і загальний `native-release.log` у `artifacts/`.
 

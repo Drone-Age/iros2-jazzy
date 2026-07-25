@@ -10,6 +10,7 @@ version="${IROS2_VERSION:-$(<"${repo_root}/VERSION")}"
 source /etc/os-release
 [[ "${ID}" == "debian" && "${VERSION_CODENAME}" == "trixie" ]]
 test -f "${install_prefix}/setup.bash"
+test -f "${output_dir}/build.ok"
 
 IROS2_INSTALL_PREFIX="${install_prefix}" \
 IROS2_OUTPUT_DIR="${output_dir}" \

@@ -45,4 +45,12 @@ colcon build \
     -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_TESTING=OFF
 
+test -f "${install_base}/setup.bash"
+env -i HOME="${HOME}" PATH="/usr/bin:/bin" \
+  bash --noprofile --norc -c "
+    source '${install_base}/setup.bash'
+    ros2 pkg prefix ros_base
+    ros2 pkg prefix rviz2
+  "
+
 touch "${artifacts}/build.ok"

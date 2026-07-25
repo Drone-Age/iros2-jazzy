@@ -4,6 +4,7 @@ set -Eeuo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 workspace="${IROS2_WORKSPACE:-$HOME/iros2_0-native/work}"
 artifacts="${IROS2_OUTPUT_DIR:-${repo_root}/artifacts}"
+install_prefix="${IROS2_INSTALL_PREFIX:-${workspace}/install}"
 release_log="${artifacts}/native-release.log"
 
 mkdir -p "${artifacts}"
@@ -14,6 +15,7 @@ echo "IROS2_0 native release started at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 echo "Repository: ${repo_root}"
 echo "Workspace: ${workspace}"
 echo "Artifacts: ${artifacts}"
+echo "Install prefix: ${install_prefix}"
 
 if [[ "${IROS2_INSTALL_DEPENDENCIES:-0}" == "1" ]]; then
   echo "Stage: install dependencies"
@@ -24,12 +26,13 @@ fi
 echo "Stage: build ROS"
 bash "${repo_root}/scripts/native/build-rpi.sh" \
   "${workspace}" \
-  "${IROS2_INSTALL_PREFIX:-/opt/iros2_0/jazzy}" \
+  "${install_prefix}" \
   "${artifacts}"
 
 echo "Stage: build Debian package"
 IROS2_WORKSPACE="${workspace}" \
 IROS2_OUTPUT_DIR="${artifacts}" \
+IROS2_INSTALL_PREFIX="${install_prefix}" \
   bash "${repo_root}/scripts/native/build-package.sh"
 
 echo "Artifacts:"
