@@ -71,6 +71,11 @@ rviz2
 Критерій: вікно RViz відкривається, не завершується з помилкою Qt/OpenGL,
 відображає стандартну сцену та реагує на керування.
 
+На Raspberry Pi OS із Wayland RViz/Ogre використовує GLX через XWayland.
+Native verifier автоматично обирає Qt `xcb`, якщо доступний `DISPLAY`.
+Під час запуску через SSH потрібно також передати чинний `XAUTHORITY`;
+локальний графічний термінал зазвичай уже має ці змінні.
+
 ## Автоматична native-перевірка
 
 Скрипт виконує завантаження, checksum, чисте встановлення та два незалежні
@@ -80,6 +85,15 @@ login-shell тести:
 cd iros2_0
 export IROS2_RELEASE_TAG=v0.1.0
 export IROS2_PACKAGE_VERSION=0.1.0-1+deb13
+export IROS2_RVIZ_MODE=gui
+./scripts/release/verify-native.sh
+```
+
+Для повторної перевірки вже встановленого пакета без завантаження та
+перевстановлення:
+
+```bash
+export IROS2_VERIFY_INSTALLED_ONLY=1
 export IROS2_RVIZ_MODE=gui
 ./scripts/release/verify-native.sh
 ```
@@ -128,4 +142,3 @@ Windows лише керує SSH-сеансом.
 
 У разі помилки реліз не змінюється «на місці». Виправлення отримує новий
 Debian revision або новий release tag, після чого весь цикл повторюється.
-

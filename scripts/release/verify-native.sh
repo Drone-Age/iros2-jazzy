@@ -2,7 +2,12 @@
 set -Eeuo pipefail
 
 repo="${IROS2_GITHUB_REPO:-Drone-Age/iros2_0}"
-tag="${IROS2_RELEASE_TAG:?Set IROS2_RELEASE_TAG, for example v0.1.0}"
+tag="${IROS2_RELEASE_TAG:-}"
+verify_installed_only="${IROS2_VERIFY_INSTALLED_ONLY:-0}"
+if [[ "${verify_installed_only}" != "1" && -z "${tag}" ]]; then
+  echo "Set IROS2_RELEASE_TAG, for example v0.1.0." >&2
+  exit 1
+fi
 version="${IROS2_PACKAGE_VERSION:-${tag#v}-1+deb13}"
 rviz_mode="${IROS2_RVIZ_MODE:-gui}"
 allow_remove_prefix="${IROS2_ALLOW_REMOVE_PREFIX:-0}"
@@ -41,29 +46,32 @@ source /etc/os-release
 [[ "${ID}" == "debian" && "${VERSION_CODENAME}" == "trixie" ]]
 [[ "${rviz_mode}" == "gui" || "${rviz_mode}" == "offscreen" ]]
 
-curl -fL "${release_url}/${asset}" -o "${work_dir}/${asset}"
-curl -fL "${release_url}/SHA256SUMS" -o "${work_dir}/SHA256SUMS"
-(
-  cd "${work_dir}"
-  grep -F " ${asset}" SHA256SUMS | sha256sum -c -
-)
+if [[ "${verify_installed_only}" != "1" ]]; then
+  curl -fL "${release_url}/${asset}" -o "${work_dir}/${asset}"
+  curl -fL "${release_url}/SHA256SUMS" -o "${work_dir}/SHA256SUMS"
+  (
+    cd "${work_dir}"
+    grep -F " ${asset}" SHA256SUMS | sha256sum -c -
+  )
 
-if dpkg-query -W -f='${db:Status-Status}' iros2-0 2>/dev/null |
-   grep -q '^installed$'; then
-  as_root apt-get purge -y iros2-0
-fi
-
-if [[ -e /opt/iros2_0/jazzy ]]; then
-  if [[ "${allow_remove_prefix}" != "1" ]]; then
-    echo "/opt/iros2_0/jazzy remains outside dpkg control." >&2
-    echo "Use a clean target or set IROS2_ALLOW_REMOVE_PREFIX=1 explicitly." >&2
-    exit 1
+  if dpkg-query -W -f='${db:Status-Status}' iros2-0 2>/dev/null |
+     grep -q '^installed$'; then
+    as_root apt-get purge -y iros2-0
   fi
-  as_root rm -rf -- /opt/iros2_0/jazzy
+
+  if [[ -e /opt/iros2_0/jazzy ]]; then
+    if [[ "${allow_remove_prefix}" != "1" ]]; then
+      echo "/opt/iros2_0/jazzy remains outside dpkg control." >&2
+      echo "Use a clean target or set IROS2_ALLOW_REMOVE_PREFIX=1 explicitly." >&2
+      exit 1
+    fi
+    as_root rm -rf -- /opt/iros2_0/jazzy
+  fi
+
+  as_root apt-get update
+  as_root apt-get install -y "${work_dir}/${asset}"
 fi
 
-as_root apt-get update
-as_root apt-get install -y "${work_dir}/${asset}"
 dpkg-query -W -f='${Package} ${Version} ${Architecture} ${db:Status-Status}\n' \
   iros2-0
 
@@ -82,7 +90,22 @@ if [[ "${rviz_mode}" == "gui" ]]; then
     echo "GUI mode requires DISPLAY or WAYLAND_DISPLAY." >&2
     exit 1
   }
-  rviz_command="rviz2 >'${rviz_log}' 2>&1 & pid=\$!; sleep 10; kill -0 \$pid; kill -TERM \$pid; wait \$pid || true"
+  if [[ -n "${DISPLAY:-}" ]]; then
+    qt_platform=xcb
+  else
+    qt_platform=wayland
+  fi
+  rviz_command="
+    QT_QPA_PLATFORM=${qt_platform} rviz2 >'${rviz_log}' 2>&1 &
+    pid=\$!
+    sleep 10
+    if ! kill -0 \$pid 2>/dev/null; then
+      wait \$pid
+      exit \$?
+    fi
+    kill -TERM \$pid
+    wait \$pid || true
+  "
 else
   rviz_command="QT_QPA_PLATFORM=offscreen rviz2 --help >'${rviz_log}' 2>&1"
 fi
