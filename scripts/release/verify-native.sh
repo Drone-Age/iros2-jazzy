@@ -25,7 +25,7 @@ as_root() {
   fi
 }
 
-fresh_login() {
+clean_shell() {
   env -i \
     HOME="${HOME}" \
     USER="${USER:-$(id -un)}" \
@@ -38,7 +38,7 @@ fresh_login() {
     XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-}" \
     DBUS_SESSION_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS:-}" \
     PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
-    bash --login -c "$1"
+    bash --noprofile --norc -c "$1"
 }
 
 [[ "$(uname -m)" == "aarch64" ]]
@@ -77,14 +77,21 @@ fi
 dpkg-query -W -f='${Package} ${Version} ${Architecture} ${db:Status-Status}\n' \
   iros2-0
 
-# A new login shell must discover ROS through /etc/profile.d/iros2-0.sh.
-fresh_login '
+# Package-owned wrappers must work without an inherited ROS environment.
+clean_shell '
   set -e
-  test "$ROS_DISTRO" = jazzy
-  command -v ros2
+  test -z "${ROS_DISTRO:-}"
+  test "$(command -v ros2)" = /usr/bin/ros2
   ros2 --help >/dev/null
   ros2 pkg prefix ros_base
   ros2 doctor --report >/dev/null
+'
+
+clean_shell '
+  set -e
+  source /opt/iros2_0/jazzy/setup.bash
+  test "$ROS_DISTRO" = jazzy
+  command -v colcon >/dev/null
 '
 
 if [[ "${rviz_mode}" == "gui" ]]; then
@@ -113,7 +120,7 @@ else
 fi
 
 # RViz is tested in a second, independent new login shell.
-if ! fresh_login "${rviz_command}"; then
+if ! clean_shell "${rviz_command}"; then
   cat "${rviz_log}" >&2 || true
   exit 1
 fi

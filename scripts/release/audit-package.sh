@@ -12,6 +12,10 @@ dpkg-deb --info "${deb}" >/dev/null
 dpkg-deb --contents "${deb}" > "${contents_file}"
 grep -q './opt/iros2_0/jazzy/setup.bash' "${contents_file}"
 grep -q './opt/iros2_0/jazzy/rviz2/bin/rviz2' "${contents_file}"
+grep -q './usr/bin/ros2' "${contents_file}"
+grep -q './usr/bin/rviz2' "${contents_file}"
+grep -q './usr/bin/iros2-enable-bash' "${contents_file}"
+grep -q './usr/lib/iros2-0/docker-entrypoint.sh' "${contents_file}"
 
 dpkg-deb --extract "${deb}" "${extract_dir}"
 

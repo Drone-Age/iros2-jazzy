@@ -95,3 +95,14 @@ RUN /usr/local/lib/iros2_0/build-deb.sh
 FROM scratch AS artifact
 
 COPY --from=package /out/ /
+
+FROM debian:trixie-slim AS runtime
+
+COPY --from=package /out/iros2-0_*.deb /tmp/
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends /tmp/iros2-0_*.deb \
+    && rm -f /tmp/iros2-0_*.deb \
+    && rm -rf /var/lib/apt/lists/*
+
+ENTRYPOINT ["/usr/lib/iros2-0/docker-entrypoint.sh"]
+CMD ["ros2", "--help"]

@@ -19,11 +19,21 @@ mkdir -p \
   "${package_root}/DEBIAN" \
   "${package_root}/opt/iros2_0" \
   "${package_root}/etc/profile.d" \
+  "${package_root}/usr/bin" \
+  "${package_root}/usr/lib/iros2-0" \
   "${output_dir}"
 
 cp -a "${install_prefix}" "${package_root}/opt/iros2_0/jazzy"
 install -m 0644 "${packaging_dir}/iros2-0.sh" \
   "${package_root}/etc/profile.d/iros2-0.sh"
+install -m 0755 "${packaging_dir}/ros2" \
+  "${package_root}/usr/bin/ros2"
+install -m 0755 "${packaging_dir}/rviz2" \
+  "${package_root}/usr/bin/rviz2"
+install -m 0755 "${packaging_dir}/iros2-enable-bash" \
+  "${package_root}/usr/bin/iros2-enable-bash"
+install -m 0755 "${packaging_dir}/docker-entrypoint.sh" \
+  "${package_root}/usr/lib/iros2-0/docker-entrypoint.sh"
 
 # google_benchmark_vendor 1.8.3 generates a pkg-config file with its temporary
 # ExternalProject install prefix. Normalize it to the final package prefix for
