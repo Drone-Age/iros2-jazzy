@@ -32,6 +32,7 @@ as_root env DEBIAN_FRONTEND=noninteractive apt-get install -y \
   pyqt5-dev \
   python3-colcon-bash \
   python3-colcon-package-information \
+  python3-colcon-parallel-executor \
   python3-pyqt5 \
   python3-pyqt5.qtsvg \
   python3-pyside2.qtsvg \
