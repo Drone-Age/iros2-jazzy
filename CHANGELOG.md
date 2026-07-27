@@ -1,5 +1,13 @@
 # Changelog
 
+## Process 1.5.9
+
+- Made native APT verification transactional for its temporary source-list and
+  keyring files.
+- Restored any pre-existing iROS2j APT configuration after verification and
+  removed temporary configuration on both PASS and failure.
+- Added regression coverage for APT verification cleanup.
+
 ## Process 1.5.8
 
 - Deferred native build/log cleanup until every packaging, audit, signing, SBOM,

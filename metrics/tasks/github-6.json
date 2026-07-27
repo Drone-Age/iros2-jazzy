@@ -11,8 +11,8 @@
   "versions": {
     "product": "1.0.1",
     "product_tag": "v2.1.0.1",
-    "process": "1.5.8",
-    "process_tag": "process-v1.5.8"
+    "process": "1.5.9",
+    "process_tag": "process-v1.5.9"
   },
   "estimates": [
     {
@@ -214,6 +214,17 @@
       "root_cause": "Status mutations lacked an explicit terminal precondition and mandatory post-write verification of status and date_closed.",
       "correction": "Restored and verified in progress with date_closed null, synchronized completed stages, and published verified ClickUp comment 90150245337520.",
       "prevention": "Require terminal gate evidence, read-before/write/read-after status handling, automatic non-terminal restoration, and an incident comment for mismatches.",
+      "tracked_minutes_lost": null,
+      "machine_minutes_lost": 0,
+      "invalidated_evidence": []
+    },
+    {
+      "stage": "native-install-verification",
+      "category": "temporary-apt-source-leak",
+      "symptom": "The next exact run failed in bootstrap because apt still referenced a deleted /tmp/iros2j-verify.* repository.",
+      "root_cause": "verify-native.sh removed its temporary repository but did not remove or restore the source-list and keyring files it installed system-wide.",
+      "correction": "Make APT verification transactional and clean or restore both files on every exit.",
+      "prevention": "Regression-test cleanup trap registration and restoration of pre-existing APT configuration.",
       "tracked_minutes_lost": null,
       "machine_minutes_lost": 0,
       "invalidated_evidence": []

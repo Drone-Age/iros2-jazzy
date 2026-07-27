@@ -81,6 +81,14 @@ class RepositoryPolicyTests(unittest.TestCase):
             release.index("printf 'PASS"),
         )
 
+    def test_native_verification_restores_apt_configuration(self):
+        verify = (ROOT / "scripts" / "release" / "verify-native.sh").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn('previous_source="${temporary}/previous-iros2j.list"', verify)
+        self.assertIn('as_root rm -f -- "${source_list}" "${keyring}"', verify)
+        self.assertIn('trap cleanup EXIT', verify)
+
 
 if __name__ == "__main__":
     unittest.main()

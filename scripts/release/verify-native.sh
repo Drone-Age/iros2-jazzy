@@ -16,7 +16,29 @@ as_root() {
 }
 
 temporary="$(mktemp -d /tmp/iros2j-verify.XXXXXX)"
-trap 'rm -rf -- "${temporary}"' EXIT
+source_list="/etc/apt/sources.list.d/iros2j.list"
+keyring="/usr/share/keyrings/iros2j-archive-keyring.gpg"
+previous_source="${temporary}/previous-iros2j.list"
+previous_keyring="${temporary}/previous-iros2j-archive-keyring.gpg"
+
+if as_root test -f "${source_list}"; then
+  as_root cp -a "${source_list}" "${previous_source}"
+fi
+if as_root test -f "${keyring}"; then
+  as_root cp -a "${keyring}" "${previous_keyring}"
+fi
+
+cleanup() {
+  as_root rm -f -- "${source_list}" "${keyring}"
+  if [[ -f "${previous_source}" ]]; then
+    as_root install -m 0644 "${previous_source}" "${source_list}"
+  fi
+  if [[ -f "${previous_keyring}" ]]; then
+    as_root install -m 0644 "${previous_keyring}" "${keyring}"
+  fi
+  rm -rf -- "${temporary}"
+}
+trap cleanup EXIT
 
 if [[ -z "${archive}" ]]; then
   archive="${temporary}/iros2j-apt_trixie_arm64.tar.gz"
@@ -39,10 +61,10 @@ chmod -R a+rX "${apt_root}"
 gpg --dearmor < "${apt_root}/iros2j-archive-keyring.asc" \
   > "${temporary}/iros2j-archive-keyring.gpg"
 as_root install -m 0644 "${temporary}/iros2j-archive-keyring.gpg" \
-  /usr/share/keyrings/iros2j-archive-keyring.gpg
+  "${keyring}"
 printf 'deb [arch=arm64 signed-by=/usr/share/keyrings/iros2j-archive-keyring.gpg] file:%s trixie main\n' \
   "${apt_root}" |
-  as_root tee /etc/apt/sources.list.d/iros2j.list >/dev/null
+  as_root tee "${source_list}" >/dev/null
 
 as_root apt-get update
 if dpkg-query -W -f='${db:Status-Status}' iros2-0 2>/dev/null |
