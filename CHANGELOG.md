@@ -1,5 +1,11 @@
 # Changelog
 
+## Process 1.5.6
+
+- Normalized multi-package rosdep output into individual Debian dependency
+  names before generating control files.
+- Added regression coverage for Debian `Depends` tokenization.
+
 ## Process 1.5.5
 
 - Excluded ROS package-group identifiers from Debian runtime dependencies;

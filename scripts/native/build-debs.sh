@@ -98,7 +98,8 @@ PY
     fi
     mapfile -t resolved < <(
       printf '%s\n' "${resolved_text}" |
-        sed -e '/^#/d' -e '/^[[:space:]]*$/d'
+        sed -e '/^#/d' -e '/^[[:space:]]*$/d' |
+        tr -s '[:space:]' '\n'
     )
     ((${#resolved[@]} > 0)) || {
       echo "rosdep returned no Debian package for ${key} (${ros_name})." >&2

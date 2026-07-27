@@ -54,6 +54,12 @@ class RepositoryPolicyTests(unittest.TestCase):
         self.assertIn('remote_root_abs=`$(cd', dispatcher)
         self.assertIn('> "`$remote_root_abs/exit-code"', dispatcher)
 
+    def test_rosdep_results_are_split_into_individual_debian_packages(self):
+        builder = (ROOT / "scripts" / "native" / "build-debs.sh").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("tr -s '[:space:]' '\\n'", builder)
+
 
 if __name__ == "__main__":
     unittest.main()

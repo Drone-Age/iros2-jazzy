@@ -11,8 +11,8 @@
   "versions": {
     "product": "1.0.1",
     "product_tag": "v2.1.0.1",
-    "process": "1.5.5",
-    "process_tag": "process-v1.5.5"
+    "process": "1.5.6",
+    "process_tag": "process-v1.5.6"
   },
   "estimates": [
     {
@@ -170,6 +170,17 @@
       "root_cause": "Package groups, source-bundled Gazebo libraries, and an optional proprietary RTI backend were incorrectly treated as mandatory external Debian runtime packages.",
       "correction": "Exclude group identifiers, bundled Gazebo payload, and optional RTI Connext from hard Debian Depends.",
       "prevention": "Preflight every unique external key and regression-test each non-system dependency category.",
+      "tracked_minutes_lost": null,
+      "machine_minutes_lost": 0,
+      "invalidated_evidence": []
+    },
+    {
+      "stage": "native-packaging",
+      "category": "debian-dependency-tokenization",
+      "symptom": "dpkg-deb rejected the libcurl_vendor control file after rosdep returned two apt packages on one line.",
+      "root_cause": "The packaging loop preserved each rosdep output line as one dependency instead of splitting whitespace-delimited package names.",
+      "correction": "Normalize non-comment rosdep output into one Debian package token per line.",
+      "prevention": "Regression-test tokenization of multi-package rosdep results before control-file generation.",
       "tracked_minutes_lost": null,
       "machine_minutes_lost": 0,
       "invalidated_evidence": []
