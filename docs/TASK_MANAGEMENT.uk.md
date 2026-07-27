@@ -5,6 +5,7 @@ release-робіт у цьому репозиторії.
 
 Time estimates, використання ClickUp timer, historical metrics і completion
 reports регулюються `ESTIMATION_AND_PERFORMANCE.md`.
+Статуси ClickUp, transitions і task comments регулюються `SCRUMNEO.md`.
 
 ## 1. Обов'язкові work items
 
@@ -61,18 +62,24 @@ ClickUp є авторитетним для:
 
 ## 4. Відповідність статусів
 
-Застосовуйте таку default mapping:
+Застосовуйте таку mapping. Детальні transition rules визначено в
+`SCRUMNEO.md`:
 
 | Стан роботи | GitHub | ClickUp |
 |---|---|---|
-| Запропоновано | Open Issue без `approved` | `planning` |
-| Затверджено, не розпочато | Open Issue з `approved` | `to do` |
+| Запропоновано | Open Issue без `approved` | `backlog` |
+| Затверджено, готово до початку | Open Issue з `approved` | `todo` |
+| Analysis | Open Issue | `analyse` |
+| Planning | Open Issue | `planning` |
 | Активна реалізація або gate | Open Issue | `in progress` |
-| Тимчасово потрібні зовнішні дані | Open Issue з blocker comment | `on hold` |
-| Суттєвий defect або schedule risk | Open Issue з risk comment | `at risk` |
-| Потрібна зміна scope/process | Open Issue з proposed change | `update required` |
-| Прийнято й опубліковано | Closed as completed | `complete` |
-| Відхилено або замінено | Closed as not planned | `cancelled` |
+| Review | Open Issue або Pull Request | `in review` |
+| Checks завершено, очікується acceptance | Open Issue | `completed` |
+| Owner прийняв | Open Issue з acceptance comment | `accepted` |
+| Review або acceptance не пройдено | Open Issue з rejection evidence | `rejected` |
+| Потрібні зовнішні дані | Open Issue з blocker comment | `blocked` |
+| Прийнято й повністю зафіксовано | Closed as completed | `complete` |
+| Скасовано або замінено | Closed as not planned | `cancelled` |
+| Архівовано після terminal outcome | Closed | `closed` |
 
 Blocker не закриває задачу. Запишіть точні відсутні дані, останній успішний
 checkpoint і безпечну resume command.
@@ -102,8 +109,10 @@ checkpoint і безпечну resume command.
 - blocker і потрібну дію owner, якщо є.
 
 GitHub отримує довговічний technical evidence. ClickUp отримує стислий
-planning summary і посилання на цей evidence. Оновлення лише в chat не
-виконує цю політику.
+planning summary і посилання на цей evidence. Суттєві події також фіксуються
+як хронологічні ClickUp task comments згідно з `SCRUMNEO.md`. Оновлення лише
+description задачі або chat не виконує цю політику, коли comment posting
+доступний.
 
 ## 6. Зміни scope і версії
 
@@ -146,7 +155,8 @@ duplicate work items на припущеннях.
 3. release/evidence links наявні в обох системах;
 4. документація та версії відповідають опублікованому стану;
 5. GitHub Issue закрита як completed;
-6. ClickUp checklist завершений і status дорівнює `complete`.
+6. ClickUp checklist завершений і status дорівнює `complete`; `closed` може
+   слідувати лише як archival transition.
 
 Post-release defects створюють нову пов'язану task і PATCH version. Вони не
 відкривають повторно й не переписують immutable release history.

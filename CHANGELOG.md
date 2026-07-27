@@ -1,5 +1,14 @@
 # Changelog
 
+## Process 1.4.0
+
+- Added the normative ScrumNEO task lifecycle for Indra Workspace.
+- Defined status meanings, successful and return transitions, terminal
+  outcomes, and whole-task status semantics.
+- Made ClickUp checkpoint comments part of task history and defined their
+  content, notification rules, verification, and connector fallback.
+- Made new agent sessions load the ScrumNEO policy automatically.
+
 ## Process 1.3.0
 
 - Made ClickUp time estimates and start/stop time tracking mandatory.

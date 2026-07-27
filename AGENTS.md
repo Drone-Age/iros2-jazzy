@@ -7,6 +7,9 @@
 - Before starting or resuming implementation work, read
   `docs/TASK_MANAGEMENT.md` and identify the linked GitHub Issue and ClickUp
   task. If either link is missing, establish it before reporting progress.
+- Read `docs/SCRUMNEO.md` before changing a ClickUp task status or posting a
+  task comment. Use comments for material chronological checkpoints and verify
+  automated comment creation by reading the task activity.
 - Read `docs/ESTIMATION_AND_PERFORMANCE.md`. Before task work, ensure the
   ClickUp task has an initial estimate and start its time tracker. Stop the
   tracker when work pauses, waits for external input, or the session ends.

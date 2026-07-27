@@ -5,6 +5,8 @@ release work in this repository.
 
 Time estimates, ClickUp timer use, historical metrics, and completion reports
 are governed by `ESTIMATION_AND_PERFORMANCE.md`.
+ClickUp statuses, transitions, and task comments are governed by
+`SCRUMNEO.md`.
 
 ## 1. Work-item requirement
 
@@ -61,18 +63,23 @@ requires its stated check or evidence.
 
 ## 4. Status mapping
 
-Use this default mapping:
+Use this mapping. Detailed transition rules are in `SCRUMNEO.md`.
 
 | Work state | GitHub | ClickUp |
 |---|---|---|
-| Proposed | Open Issue without `approved` | `planning` |
-| Approved, not started | Open Issue with `approved` | `to do` |
+| Proposed | Open Issue without `approved` | `backlog` |
+| Approved, ready to start | Open Issue with `approved` | `todo` |
+| Analysis | Open Issue | `analyse` |
+| Planning | Open Issue | `planning` |
 | Active implementation or gate | Open Issue | `in progress` |
-| External input temporarily required | Open Issue with blocker comment | `on hold` |
-| Material defect or schedule risk | Open Issue with risk comment | `at risk` |
-| Scope/process must be revised | Open Issue with proposed change | `update required` |
-| Accepted and published | Closed as completed | `complete` |
-| Rejected or superseded | Closed as not planned | `cancelled` |
+| Review | Open Issue or Pull Request | `in review` |
+| Checks complete, acceptance pending | Open Issue | `completed` |
+| Owner accepted | Open Issue with acceptance comment | `accepted` |
+| Review or acceptance failed | Open Issue with rejection evidence | `rejected` |
+| External input required | Open Issue with blocker comment | `blocked` |
+| Accepted and fully recorded | Closed as completed | `complete` |
+| Cancelled or superseded | Closed as not planned | `cancelled` |
+| Archived after a terminal outcome | Closed | `closed` |
 
 A blocker does not close the task. Record the exact missing input, last
 successful checkpoint, and safe resume command.
@@ -102,8 +109,10 @@ Each checkpoint update includes:
 - blocker and required owner action, if any.
 
 GitHub receives durable technical evidence. ClickUp receives the concise
-planning summary and links back to that evidence. Updating only a chat message
-does not satisfy this policy.
+planning summary and links back to that evidence. Material events are also
+recorded as chronological ClickUp task comments according to `SCRUMNEO.md`.
+Updating only a task description or chat message does not satisfy this policy
+when comment posting is available.
 
 ## 6. Scope and version changes
 
@@ -145,7 +154,8 @@ Before closing linked tasks:
 3. release/evidence links are present in both systems;
 4. documentation and versions match the published state;
 5. GitHub Issue is closed as completed;
-6. ClickUp checklist is complete and status is `complete`.
+6. ClickUp checklist is complete and status is `complete`; `closed` may follow
+   only as an archival transition.
 
 Post-release defects create a new linked task and PATCH version. They do not
 reopen or rewrite immutable release history.

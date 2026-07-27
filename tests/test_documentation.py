@@ -10,6 +10,7 @@ NORMATIVE = [
     "docs/PACKAGE_POLICY.md",
     "docs/RELEASE_PROCESS.md",
     "docs/TASK_MANAGEMENT.md",
+    "docs/SCRUMNEO.md",
     "docs/ESTIMATION_AND_PERFORMANCE.md",
     "docs/V1_MIGRATION_PLAN.md",
 ]
@@ -66,12 +67,34 @@ class DocumentationTests(unittest.TestCase):
         policy = (ROOT / "docs" / "TASK_MANAGEMENT.md").read_text(encoding="utf-8")
         self.assertIn("docs/TASK_MANAGEMENT.md", agents)
         self.assertIn("docs/ESTIMATION_AND_PERFORMANCE.md", agents)
+        self.assertIn("docs/SCRUMNEO.md", agents)
         for required in (
             "one open GitHub Issue",
             "one ClickUp task",
             "reciprocal links",
             "New-session startup protocol",
             "exact commit SHA",
+        ):
+            self.assertIn(required, policy)
+
+    def test_scrumneo_statuses_and_comments_are_normative(self):
+        policy = (ROOT / "docs" / "SCRUMNEO.md").read_text(encoding="utf-8")
+        for required in (
+            "`backlog`",
+            "`todo`",
+            "`analyse`",
+            "`planning`",
+            "`in progress`",
+            "`in review`",
+            "`completed`",
+            "`accepted`",
+            "`rejected`",
+            "`blocked`",
+            "`complete`",
+            "`cancelled`",
+            "`closed`",
+            "Task comments",
+            "Comment integration fallback",
         ):
             self.assertIn(required, policy)
 
