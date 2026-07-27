@@ -89,6 +89,14 @@ class RepositoryPolicyTests(unittest.TestCase):
         self.assertIn('as_root rm -f -- "${source_list}" "${keyring}"', verify)
         self.assertIn('trap cleanup EXIT', verify)
 
+    def test_native_gate_normalizes_manifest_line_endings(self):
+        for script_name in ("create-native-gate.py", "verify-native-gate.py"):
+            script = (
+                ROOT / "scripts" / "release" / script_name
+            ).read_text(encoding="utf-8")
+            self.assertIn("text_sha256(args.manifest)", script)
+            self.assertIn('.replace("\\r\\n", "\\n").replace("\\r", "\\n")', script)
+
 
 if __name__ == "__main__":
     unittest.main()

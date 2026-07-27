@@ -1,5 +1,12 @@
 # Changelog
 
+## Process 1.5.10
+
+- Normalized manifest line endings before hashing native-gate evidence.
+- Made native-gate verification portable between Linux and Windows Git
+  worktrees.
+- Added regression coverage for the cross-platform manifest hash contract.
+
 ## Process 1.5.9
 
 - Made native APT verification transactional for its temporary source-list and

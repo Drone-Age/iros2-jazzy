@@ -19,6 +19,12 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def text_sha256(path: Path) -> str:
+    """Hash UTF-8 text with Git-compatible LF line endings."""
+    content = path.read_text(encoding="utf-8").replace("\r\n", "\n").replace("\r", "\n")
+    return hashlib.sha256(content.encode("utf-8")).hexdigest()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--commit", default="HEAD")
@@ -56,7 +62,7 @@ def main() -> int:
             "os_release": Path("/etc/os-release").read_text(encoding="utf-8"),
         },
         "inputs": {
-            "manifest_sha256": sha256(args.manifest),
+            "manifest_sha256": text_sha256(args.manifest),
             "inventory_sha256": sha256(args.inventory),
             "install_smoke_sha256": sha256(args.smoke_log),
         },
