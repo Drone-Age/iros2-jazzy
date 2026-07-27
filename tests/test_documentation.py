@@ -96,6 +96,8 @@ class DocumentationTests(unittest.TestCase):
             "`closed`",
             "Task comments",
             "Comment integration fallback",
+            "the editor is cleared",
+            "separate comment entry",
         ):
             self.assertIn(required, policy)
 

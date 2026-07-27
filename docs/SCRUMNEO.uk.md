@@ -91,12 +91,19 @@ Estimate impact: none або уточнені P50/P80 з причиною
 
 ## Резервний шлях інтеграції коментарів
 
-Після автоматичної публікації прочитайте коментарі задачі та перевірте новий
-коментар. Якщо ClickUp comment API не працює:
+Після публікації перевірте всі умови:
+
+- editor очищено;
+- Activity показує окремий comment entry з author і timestamp;
+- свіже читання comments повертає новий comment або його identifier.
+
+Текст, який залишився в editor або лише присутній деінде на сторінці, не є
+publication evidence. Якщо ClickUp comment API не працює:
 
 1. не повторюйте багаторазово ту саму mutation;
-2. опублікуйте через authenticated ClickUp interface, якщо він доступний, і
-   перевірте task activity;
+2. опублікуйте через authenticated ClickUp interface, якщо він доступний,
+   використовуючи підтримуваний submit shortcut або control, а потім виконайте
+   всі перевірки вище;
 3. якщо interface недоступний, оновіть current summary задачі та запишіть
    обмеження connector до repository task error log;
 4. збережіть durable evidence і повний checkpoint у пов'язаній GitHub Issue;

@@ -11,8 +11,8 @@
   "versions": {
     "product": "1.0.1",
     "product_tag": "v2.1.0.1",
-    "process": "1.5.0",
-    "process_tag": "process-v1.5.0"
+    "process": "1.5.1",
+    "process_tag": "process-v1.5.1"
   },
   "estimates": [
     {
@@ -118,6 +118,19 @@
       "tracked_minutes_lost": null,
       "machine_minutes_lost": 0,
       "invalidated_evidence": []
+    },
+    {
+      "stage": "task-comments",
+      "category": "false-positive-verification",
+      "symptom": "Draft text remaining in the ClickUp editor was incorrectly reported as a published comment, while the comment API returned zero comments.",
+      "root_cause": "Verification searched for text on the page but did not require editor clearing, a separate authored Activity entry, and a fresh comment read.",
+      "correction": "Submitted with the supported keyboard shortcut and verified editor clearing, an authored Activity entry, and comment ID 90150245276115 through the API.",
+      "prevention": "Require all three publication checks in SCRUMNEO.md before reporting success or changing a task to blocked.",
+      "tracked_minutes_lost": null,
+      "machine_minutes_lost": 0,
+      "invalidated_evidence": [
+        "Earlier claims that the process 1.4.0 and 1.5.0 ClickUp comments were published"
+      ]
     },
     {
       "stage": "task-linking",

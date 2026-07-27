@@ -92,12 +92,19 @@ comment does not replace durable GitHub technical evidence.
 
 ## Comment integration fallback
 
-After automated posting, read the task comments and verify the new comment. If
-the ClickUp comment API fails:
+After posting, verify all of the following:
+
+- the editor is cleared;
+- Activity shows a separate comment entry with an author and timestamp;
+- a fresh comment read returns the new comment or its identifier.
+
+Text still visible in the editor or merely present elsewhere on the page is
+not publication evidence. If the ClickUp comment API fails:
 
 1. do not repeatedly submit the same mutation;
-2. post through the authenticated ClickUp interface when available and verify
-   it in task activity;
+2. post through the authenticated ClickUp interface when available, using its
+   supported submit shortcut or control, then perform all verification checks
+   above;
 3. if interface posting is unavailable, update the task current summary and
    record the connector limitation in the repository task error log;
 4. retain durable evidence and the full checkpoint in the linked GitHub Issue;

@@ -1,5 +1,12 @@
 # Changelog
 
+## Process 1.5.1
+
+- Corrected ClickUp comment verification: draft text is not evidence of
+  publication.
+- Required editor clearing, a separate authored Activity entry, and a fresh
+  comment read before reporting a successful post.
+
 ## Process 1.5.0
 
 - Added `preparation` for supporting work that does not directly execute the
