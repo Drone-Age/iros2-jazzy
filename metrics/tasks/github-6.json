@@ -94,6 +94,28 @@
       "evidence": "docs/SCRUMNEO.md",
       "reusable": true,
       "summary": "Added preparation for supporting work and distinguished it from analysis, planning, and direct implementation."
+    },
+    {
+      "stage": "release",
+      "category": "commit-bound-metadata-gate",
+      "result": "PASS",
+      "attempt": 2,
+      "duration_minutes": null,
+      "commit": "1d978fab88ed2b15aeb62f2c48b2d631d1b61d57",
+      "evidence": "scripts/release/metadata_gate.py --commit 1d978fab88ed2b15aeb62f2c48b2d631d1b61d57",
+      "reusable": true,
+      "summary": "Validated the exact origin/main checkpoint before native ARM64 dispatch."
+    },
+    {
+      "stage": "release",
+      "category": "native-arm64-dispatch",
+      "result": "BLOCKED",
+      "attempt": 1,
+      "duration_minutes": null,
+      "commit": "1d978fab88ed2b15aeb62f2c48b2d631d1b61d57",
+      "evidence": "No IROS2_SSH_* environment variables, SSH host alias, local gpg command, or builder GPG key configuration was available.",
+      "reusable": false,
+      "summary": "Native execution requires the Debian 13 ARM64 SSH target and release GPG key ID."
     }
   ],
   "errors": [
@@ -131,6 +153,17 @@
       "invalidated_evidence": [
         "Earlier claims that the process 1.4.0 and 1.5.0 ClickUp comments were published"
       ]
+    },
+    {
+      "stage": "release-metadata",
+      "category": "invalid-commit-identifier",
+      "symptom": "The first commit-bound metadata-gate invocation used an incorrectly expanded 40-character SHA and git could not resolve VERSION at that revision.",
+      "root_cause": "A short commit display value was manually expanded instead of resolving it with git rev-parse.",
+      "correction": "Resolved HEAD with git rev-parse and reran the metadata gate successfully on 1d978fab88ed2b15aeb62f2c48b2d631d1b61d57.",
+      "prevention": "Always obtain full commit identifiers programmatically with git rev-parse before commit-bound gates.",
+      "tracked_minutes_lost": null,
+      "machine_minutes_lost": 0,
+      "invalidated_evidence": []
     },
     {
       "stage": "task-linking",
