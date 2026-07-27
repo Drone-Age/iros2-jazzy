@@ -116,6 +116,28 @@
       "evidence": "No IROS2_SSH_* environment variables, SSH host alias, local gpg command, or builder GPG key configuration was available.",
       "reusable": false,
       "summary": "Native execution requires the Debian 13 ARM64 SSH target and release GPG key ID."
+    },
+    {
+      "stage": "release",
+      "category": "native-builder-access",
+      "result": "PASS",
+      "attempt": 2,
+      "duration_minutes": null,
+      "commit": "1c73e03714e38b792202d8dfa96f1812bc8e634e",
+      "evidence": "rpi@192.168.144.106 via C:/Users/kkova/.ssh/id_ed25519_rpi106",
+      "reusable": true,
+      "summary": "Verified Debian 13 Trixie aarch64 builder access, kernel 6.18.34+rpt-rpi-2712, GnuPG 2.4.7, and non-interactive sudo."
+    },
+    {
+      "stage": "release",
+      "category": "release-gpg-key",
+      "result": "BLOCKED",
+      "attempt": 1,
+      "duration_minutes": null,
+      "commit": "1c73e03714e38b792202d8dfa96f1812bc8e634e",
+      "evidence": "No secret keys were returned from either the rpi or root GPG keyring.",
+      "reusable": false,
+      "summary": "A release signing key must be imported or created before the native pipeline can produce signed APT metadata."
     }
   ],
   "errors": [
@@ -161,6 +183,17 @@
       "root_cause": "A short commit display value was manually expanded instead of resolving it with git rev-parse.",
       "correction": "Resolved HEAD with git rev-parse and reran the metadata gate successfully on 1d978fab88ed2b15aeb62f2c48b2d631d1b61d57.",
       "prevention": "Always obtain full commit identifiers programmatically with git rev-parse before commit-bound gates.",
+      "tracked_minutes_lost": null,
+      "machine_minutes_lost": 0,
+      "invalidated_evidence": []
+    },
+    {
+      "stage": "native-builder-access",
+      "category": "ssh-key-selection",
+      "symptom": "The first builder probe using default SSH authentication returned Permission denied.",
+      "root_cause": "The builder uses the dedicated local key id_ed25519_rpi106, which was not selected by the default SSH attempt.",
+      "correction": "Selected C:/Users/kkova/.ssh/id_ed25519_rpi106 and verified builder access.",
+      "prevention": "Record and reuse the dedicated key path for rpi@192.168.144.106 in release checkpoints.",
       "tracked_minutes_lost": null,
       "machine_minutes_lost": 0,
       "invalidated_evidence": []
