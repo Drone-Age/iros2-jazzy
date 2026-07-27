@@ -60,6 +60,13 @@ class RepositoryPolicyTests(unittest.TestCase):
         )
         self.assertIn("tr -s '[:space:]' '\\n'", builder)
 
+    def test_package_audit_does_not_short_circuit_dpkg_deb_pipes(self):
+        audit = (ROOT / "scripts" / "release" / "audit-packages.sh").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn('contents="$(dpkg-deb -c "${deb}")"', audit)
+        self.assertNotIn('dpkg-deb -c "${deb}" | grep', audit)
+
 
 if __name__ == "__main__":
     unittest.main()

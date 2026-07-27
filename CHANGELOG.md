@@ -1,5 +1,11 @@
 # Changelog
 
+## Process 1.5.7
+
+- Prevented successful `dpkg-deb` listing operations from being reported as
+  failures when `grep -q` closes a pipe early under `pipefail`.
+- Added regression coverage for complete package-audit input consumption.
+
 ## Process 1.5.6
 
 - Normalized multi-package rosdep output into individual Debian dependency

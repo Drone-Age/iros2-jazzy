@@ -25,11 +25,12 @@ for deb in "${packages[@]}"; do
     echo "False official ROS compatibility in ${deb}" >&2
     exit 1
   fi
-  if dpkg-deb -c "${deb}" | grep -Eq '/opt/iros2_0|/usr/lib/iros2-0'; then
+  contents="$(dpkg-deb -c "${deb}")"
+  if grep -Eq '/opt/iros2_0|/usr/lib/iros2-0' <<<"${contents}"; then
     echo "Legacy install path in ${deb}" >&2
     exit 1
   fi
-  dpkg-deb -c "${deb}" | grep -q './opt/iros2j/'
+  grep -q './opt/iros2j/' <<<"${contents}"
   while IFS= read -r installed_path; do
     [[ "${installed_path}" == */ ]] && continue
     if [[ -n "${path_owner[${installed_path}]:-}" ]]; then
