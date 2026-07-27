@@ -101,6 +101,45 @@ class PackageMetadataTests(unittest.TestCase):
                 (),
             )
 
+    def test_inventory_packages_pinned_fast_dds_cmake_projects(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            install_base = Path(temporary)
+            create_package(install_base, "foonathan_memory_vendor", elf=True)
+            for name in ("fastcdr", "fastrtps"):
+                prefix = install_base / name
+                (prefix / "lib" / "cmake" / name).mkdir(parents=True)
+                (prefix / "lib" / f"lib{name}.so").write_bytes(b"\x7fELFfixture")
+            create_package(
+                install_base,
+                "rmw_fastrtps_cpp",
+                dependencies=("fastcdr", "fastrtps"),
+                elf=True,
+            )
+
+            packages = {
+                package.ros_name: package
+                for package in inventory(install_base, "1.0.3-1+deb13")
+            }
+
+            self.assertEqual(
+                packages["fastrtps"].dependencies,
+                (
+                    "iros2j-fastcdr (= 1.0.3-1+deb13)",
+                    "iros2j-foonathan-memory-vendor (= 1.0.3-1+deb13)",
+                ),
+            )
+            self.assertEqual(
+                packages["rmw_fastrtps_cpp"].dependencies,
+                (
+                    "iros2j-fastcdr (= 1.0.3-1+deb13)",
+                    "iros2j-fastrtps (= 1.0.3-1+deb13)",
+                ),
+            )
+            self.assertEqual(
+                packages["rmw_fastrtps_cpp"].external_dependencies,
+                (),
+            )
+
     def test_non_package_groups_and_bundled_or_optional_backends_are_ignored(self):
         with tempfile.TemporaryDirectory() as temporary:
             install_base = Path(temporary)

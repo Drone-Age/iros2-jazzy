@@ -40,6 +40,14 @@ from the custom package name. Examples:
 ROS dependency `<depend>rclcpp</depend>` maps to an exact snapshot dependency,
 for example `iros2j-rclcpp (= 1.0.1-1+deb13)`.
 
+Plain-CMake projects present in the exact ROS source lock and required by ROS
+packages are also snapshot-owned packages even when they do not install a
+`package.xml`. In particular, the pinned `fastcdr` and `fastrtps` install
+prefixes must be packaged as `iros2j-fastcdr` and `iros2j-fastrtps`.
+`rmw_fastrtps_*` must depend on those exact snapshot packages; it must not
+substitute a distribution Fast DDS major version with incompatible CMake
+metadata.
+
 ## Metapackages
 
 The initial metapackage set is:

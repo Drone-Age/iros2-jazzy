@@ -48,8 +48,11 @@ The gate must:
    ARM64 system;
 7. verify `ros2` discovery and representative runtime smoke tests in a clean
    shell;
-8. verify uninstall/upgrade behavior from legacy 0.1.x where applicable;
-9. produce checksums, SBOM, package/component manifest, and fail-closed
+8. configure, build, and run a clean downstream CMake consumer that discovers
+   every source-owned non-ament development dependency required by exported
+   ROS package metadata;
+9. verify uninstall/upgrade behavior from legacy 0.1.x where applicable;
+10. produce checksums, SBOM, package/component manifest, and fail-closed
    versioned evidence.
 
 VINS-NEO build, installation, and smoke testing are explicitly outside this

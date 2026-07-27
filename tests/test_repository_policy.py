@@ -67,6 +67,14 @@ class RepositoryPolicyTests(unittest.TestCase):
         self.assertIn('contents="$(dpkg-deb -c "${deb}")"', audit)
         self.assertNotIn('dpkg-deb -c "${deb}" | grep', audit)
 
+    def test_package_audit_enforces_source_owned_fastdds_contract(self):
+        audit = (ROOT / "scripts" / "release" / "audit-packages.sh").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("iros2j-fastcdr", audit)
+        self.assertIn("iros2j-fastrtps", audit)
+        self.assertIn("Host Fast DDS development dependency leaked", audit)
+
     def test_release_keeps_build_state_until_all_native_gates_pass(self):
         package = (ROOT / "scripts" / "native" / "build-package.sh").read_text(
             encoding="utf-8"
@@ -121,6 +129,17 @@ class RepositoryPolicyTests(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertIn("bash --noprofile --norc -e -c", verify)
+
+    def test_post_release_builds_a_clean_fastdds_consumer(self):
+        verify = (ROOT / "scripts" / "release" / "verify-native.sh").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("find_package(fastcdr 2.2 REQUIRED CONFIG)", verify)
+        self.assertIn("find_package(fastrtps 2.13 REQUIRED CONFIG)", verify)
+        self.assertIn("cmake --build '${consumer}/build'", verify)
+        self.assertIn("DomainParticipantFactory::get_instance()", verify)
+        self.assertIn("RMW_IMPLEMENTATION=rmw_fastrtps_cpp ros2 topic list", verify)
+        self.assertIn("ros2 topic pub /iros2j_fastdds_smoke", verify)
 
 
 if __name__ == "__main__":

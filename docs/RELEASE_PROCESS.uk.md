@@ -48,8 +48,11 @@ Gate має:
    13 ARM64;
 7. перевірити ROS discovery та репрезентативні runtime smoke tests у чистому
    shell;
-8. перевірити uninstall/upgrade із legacy 0.1.x там, де це застосовно;
-9. створити checksums, SBOM, package/component manifest та fail-closed
+8. налаштувати, зібрати й запустити чистий downstream CMake consumer, який
+   знаходить кожну source-owned non-ament development-залежність, потрібну
+   експортованим metadata ROS-пакетів;
+9. перевірити uninstall/upgrade із legacy 0.1.x там, де це застосовно;
+10. створити checksums, SBOM, package/component manifest та fail-closed
    версійний evidence.
 
 Збірка, встановлення та smoke-test VINS-NEO явно не входять до gate цього

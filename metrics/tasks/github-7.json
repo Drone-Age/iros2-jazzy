@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "id": "github-7",
+  "title": "Fix Fast DDS consumer metadata and release iros2j 1.0.3",
+  "task_type": "release-engineering",
+  "status": "active",
+  "links": {
+    "github": "https://github.com/Drone-Age/iros2_0/issues/7",
+    "clickup": "https://app.clickup.com/t/86caxgepm"
+  },
+  "versions": {
+    "product": "1.0.3",
+    "product_tag": "v2.1.0.3",
+    "process": "1.6.0",
+    "process_tag": "process-v1.6.0"
+  },
+  "estimates": [
+    {
+      "kind": "initial",
+      "recorded_at": "2026-07-27T16:25:07Z",
+      "p50_tracked_minutes": 480,
+      "p80_tracked_minutes": 720,
+      "p50_calendar_minutes": 1440,
+      "p80_calendar_minutes": 4320,
+      "machine_minutes": 480,
+      "external_wait_minutes": 0,
+      "confidence": "low",
+      "basis": "Corrective packaging release with one prior full iros2j release sample and uncertainty in the complete source-built Fast DDS contract."
+    },
+    {
+      "kind": "reestimate",
+      "recorded_at": "2026-07-27T16:50:00Z",
+      "p50_tracked_minutes": 420,
+      "p80_tracked_minutes": 660,
+      "p50_calendar_minutes": 1440,
+      "p80_calendar_minutes": 2880,
+      "machine_minutes": 360,
+      "external_wait_minutes": 0,
+      "confidence": "low",
+      "basis": "Audit identified a bounded omission: source-built Fast DDS 2.14.6 and Fast CDR 2.2.7 prefixes were excluded from the Debian inventory, causing rmw packages to resolve Debian Fast DDS 3.1.2 development metadata."
+    }
+  ],
+  "operations": [
+    {
+      "stage": "analysis",
+      "category": "published-snapshot-reproduction",
+      "result": "PASS",
+      "attempt": 1,
+      "duration_minutes": null,
+      "commit": "16472c893f17d4be88682e9b1139df2e7decb2ba",
+      "evidence": "v2.1.0.2 APT SHA-256 44415440f02e0d77c2dad6ad8bff520c24918e6304e78028ea905ac58bbd60c7; package inventory and Packages metadata",
+      "reusable": true,
+      "summary": "Verified that rmw_fastrtps packages depend on Debian libfastrtps-dev/libfastcdr-dev while the pinned source-built plain-CMake prefixes are absent from the package inventory."
+    }
+  ],
+  "errors": [],
+  "actual": {
+    "clickup_tracked_minutes": null,
+    "calendar_minutes": null,
+    "machine_minutes": 0,
+    "external_wait_minutes": 0,
+    "started_at": "2026-07-27T16:41:18Z",
+    "completed_at": null
+  },
+  "deliverables": [],
+  "reusable_improvements": [
+    "Inventory source-built plain-CMake dependencies and build a clean downstream consumer in release verification."
+  ],
+  "completion_report": null
+}
