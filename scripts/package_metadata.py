@@ -19,6 +19,14 @@ DEPENDENCY_TAGS = {
     "buildtool_export_depend",
 }
 OPTIONAL_EXTERNAL_DEPENDENCIES = {"rti-connext-dds-6.0.1"}
+NON_AMENT_SOURCE_DEPENDENCIES = {
+    # Fast DDS and Fast CDR are plain CMake projects in the ROS 2 source lock.
+    # They install complete development/runtime payloads but no package.xml,
+    # so they need explicit inventory metadata instead of falling through to
+    # Debian's unrelated, newer libfastrtps-dev package.
+    "fastcdr": set(),
+    "fastrtps": {"fastcdr", "foonathan_memory_vendor"},
+}
 DEBIAN_NAME = re.compile(r"^[a-z0-9][a-z0-9+.-]+$")
 
 
@@ -98,13 +106,17 @@ def inventory(install_base: Path, version: str) -> list[Package]:
         and (
             (path / "share" / path.name / "package.xml").is_file()
             or (path / "share" / path.name / "package.xml.installspace").is_file()
+            or path.name in NON_AMENT_SOURCE_DEPENDENCIES
         )
     )
     ros_names = {path.name for path in prefixes}
     packages: list[Package] = []
     for prefix in prefixes:
         ros_name = prefix.name
-        dependencies = direct_ros_dependencies(package_xml_for(prefix, ros_name))
+        if ros_name in NON_AMENT_SOURCE_DEPENDENCIES:
+            dependencies = NON_AMENT_SOURCE_DEPENDENCIES[ros_name]
+        else:
+            dependencies = direct_ros_dependencies(package_xml_for(prefix, ros_name))
         internal = tuple(
             f"{debian_name(dependency)} (= {version})"
             for dependency in sorted(dependencies & ros_names)

@@ -42,6 +42,8 @@ for deb in "${packages[@]}"; do
 done
 
 for required in \
+  iros2j-fastcdr \
+  iros2j-fastrtps \
   iros2j-ros-core \
   iros2j-ros-base \
   iros2j-common-interfaces \
@@ -51,6 +53,24 @@ for required in \
     echo "Required package is missing: ${required}" >&2
     exit 1
   }
+done
+
+for rmw_package in \
+  iros2j-rmw-fastrtps-cpp \
+  iros2j-rmw-fastrtps-dynamic-cpp \
+  iros2j-rmw-fastrtps-shared-cpp; do
+  rmw_deb=("${artifacts}/${rmw_package}_${expected_version}"_*.deb)
+  ((${#rmw_deb[@]} == 1)) || {
+    echo "Expected exactly one ${rmw_package} package." >&2
+    exit 1
+  }
+  dependencies="$(dpkg-deb -f "${rmw_deb[0]}" Depends)"
+  grep -Fq "iros2j-fastcdr (= ${expected_version})" <<<"${dependencies}"
+  grep -Fq "iros2j-fastrtps (= ${expected_version})" <<<"${dependencies}"
+  if grep -Eq '(^|, ?)(libfastcdr-dev|libfastrtps-dev)(,|$)' <<<"${dependencies}"; then
+    echo "Host Fast DDS development dependency leaked into ${rmw_package}." >&2
+    exit 1
+  fi
 done
 
 printf 'Audited %s iros2j packages.\n' "${#packages[@]}"

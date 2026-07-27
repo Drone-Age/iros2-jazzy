@@ -1,0 +1,67 @@
+{
+  "artifacts": {
+    "apt_repository": {
+      "filename": "iros2j-apt_trixie_arm64.tar.gz",
+      "sha256": "b5f01c8594ff60007819dc246a391dd4b10f1b91a92ebd8a1799d594dac25316"
+    },
+    "install_smoke": {
+      "filename": "install-smoke-test.txt",
+      "sha256": "d071b5ab19385a5f2942fbbe7cba74c652944cfa187cf1f2db4c8da6a27b0be6"
+    },
+    "native_gate": {
+      "filename": "native-gate.json"
+    },
+    "sbom": {
+      "filename": "iros2j-1.0.3.spdx.json",
+      "sha256": "5ff68b31c5adbbb64fb2c25c652dd78a472a120f4b38801865697b9af43e413e"
+    },
+    "sha256": {
+      "filename": "iros2j-apt_trixie_arm64.tar.gz.sha256",
+      "sha256": "e4399c2c46854e508244c412bcace0c811a8df3a3cce026467fe59475bb57335"
+    }
+  },
+  "build": {
+    "architecture": "arm64",
+    "build_type": "Release",
+    "codename": "trixie",
+    "install_prefix": "/opt/iros2j",
+    "native": true,
+    "operating_system": "debian",
+    "release": "13"
+  },
+  "excluded": [
+    "amd64",
+    "docker",
+    "qemu",
+    "vins-neo-validation",
+    "monolithic-packages"
+  ],
+  "packages": {
+    "inventory_sha256": "d9c80ded4012140152085c5ad267611ef3b4081a7b51b7d8a59fe4c240778671",
+    "namespace": "iros2j",
+    "required_metapackages": [
+      "iros2j-ros-core",
+      "iros2j-ros-base",
+      "iros2j-common-interfaces",
+      "iros2j-vision-opencv",
+      "iros2j-rviz2"
+    ]
+  },
+  "provenance": {
+    "build_commit": "6a9f4bdf7093b962c06363c93d26aa22daf4bbe9"
+  },
+  "release": {
+    "debian_version": "1.0.3-1+deb13",
+    "name": "iros2j",
+    "package_version": "1.0.3",
+    "process_version": "1.6.0",
+    "status": "released",
+    "tag": "v2.1.0.3"
+  },
+  "schema_version": 1,
+  "sources": {
+    "lock_file": "manifests/iros2j-jazzy.lock.repos",
+    "lock_sha256": "99a65d1ba35707626bf2a33e6de43e64decba8f5f357bd6671704618b4faff45",
+    "ros_distribution": "jazzy"
+  }
+}

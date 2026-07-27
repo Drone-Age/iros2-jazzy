@@ -40,6 +40,13 @@ ros-jazzy-<normalized-name>  ->  iros2j-<normalized-name>
 ROS-залежність `<depend>rclcpp</depend>` перетворюється на точну залежність
 snapshot, наприклад `iros2j-rclcpp (= 1.0.1-1+deb13)`.
 
+Plain-CMake-проєкти з точного ROS source lock, потрібні ROS-пакетам, також є
+пакетами snapshot навіть тоді, коли вони не встановлюють `package.xml`.
+Зокрема, зафіксовані install prefix `fastcdr` і `fastrtps` мають бути
+запаковані як `iros2j-fastcdr` та `iros2j-fastrtps`. `rmw_fastrtps_*` мають
+залежати від цих точних пакетів snapshot; підміна на Fast DDS іншої major
+версії з несумісними CMake metadata з дистрибутива заборонена.
+
 ## Метапакети
 
 Початковий набір метапакетів:

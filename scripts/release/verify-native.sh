@@ -76,16 +76,43 @@ as_root apt-get install -y \
   iros2j-vision-opencv \
   iros2j-rviz2
 
+consumer="${temporary}/fastdds-consumer"
+mkdir -p "${consumer}"
+cat > "${consumer}/CMakeLists.txt" <<'CMAKE'
+cmake_minimum_required(VERSION 3.20)
+project(iros2j_fastdds_consumer LANGUAGES CXX)
+find_package(fastcdr 2.2 REQUIRED CONFIG)
+find_package(fastrtps 2.13 REQUIRED CONFIG)
+add_executable(iros2j_fastdds_consumer main.cpp)
+target_link_libraries(iros2j_fastdds_consumer PRIVATE fastrtps fastcdr)
+CMAKE
+cat > "${consumer}/main.cpp" <<'CPP'
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+
+int main()
+{
+  return eprosima::fastdds::dds::DomainParticipantFactory::get_instance()
+    ? 0 : 1;
+}
+CPP
+
 env -i HOME="${HOME}" PATH="/usr/bin:/bin" \
-  bash --noprofile --norc -e -c '
+  bash --noprofile --norc -e -c "
     source /opt/iros2j/setup.bash
-    test "${ROS_DISTRO}" = jazzy
+    test \"\${ROS_DISTRO}\" = jazzy
     ros2 pkg prefix ros_core
     ros2 pkg prefix ros_base
     ros2 pkg prefix vision_opencv
     ros2 pkg prefix rviz2
     ros2 --help >/dev/null
     QT_QPA_PLATFORM=offscreen rviz2 --help >/dev/null
-  '
+    cmake -S '${consumer}' -B '${consumer}/build'
+    cmake --build '${consumer}/build' --parallel 2
+    '${consumer}/build/iros2j_fastdds_consumer'
+    RMW_IMPLEMENTATION=rmw_fastrtps_cpp ros2 topic list >/dev/null
+    RMW_IMPLEMENTATION=rmw_fastrtps_cpp timeout 20 \
+      ros2 topic pub /iros2j_fastdds_smoke std_msgs/msg/String \
+      '{data: fastdds}' --once --wait-matching-subscriptions 0 >/dev/null
+  "
 
 printf 'Clean iros2j APT installation verified for %s (%s).\n' "${version}" "${tag}"
