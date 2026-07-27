@@ -74,12 +74,17 @@ gh auth status
 if ($LASTEXITCODE -ne 0) {
     throw "GitHub CLI is not authenticated."
 }
+$previousErrorActionPreference = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
 gh release view $tag --repo $Repository *> $null
-if ($LASTEXITCODE -eq 0) {
+$releaseExists = $LASTEXITCODE -eq 0
+git ls-remote --exit-code --tags origin "refs/tags/$tag" *> $null
+$tagExists = $LASTEXITCODE -eq 0
+$ErrorActionPreference = $previousErrorActionPreference
+if ($releaseExists) {
     throw "Release $tag already exists."
 }
-git ls-remote --exit-code --tags origin "refs/tags/$tag" *> $null
-if ($LASTEXITCODE -eq 0) {
+if ($tagExists) {
     throw "Tag $tag already exists on origin."
 }
 

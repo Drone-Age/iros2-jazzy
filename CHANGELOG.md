@@ -1,5 +1,11 @@
 # Changelog
 
+## Process 1.5.11
+
+- Made expected GitHub release/tag absence checks non-terminating under
+  PowerShell's strict error policy.
+- Kept publication failures fail-fast after the preflight existence checks.
+
 ## Process 1.5.10
 
 - Normalized manifest line endings before hashing native-gate evidence.

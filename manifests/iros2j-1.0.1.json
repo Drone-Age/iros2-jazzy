@@ -54,7 +54,7 @@
     "debian_version": "1.0.1-1+deb13",
     "name": "iros2j",
     "package_version": "1.0.1",
-    "process_version": "1.5.10",
+    "process_version": "1.5.11",
     "status": "released",
     "tag": "v2.1.0.1"
   },

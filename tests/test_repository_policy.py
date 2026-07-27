@@ -97,6 +97,17 @@ class RepositoryPolicyTests(unittest.TestCase):
             self.assertIn("text_sha256(args.manifest)", script)
             self.assertIn('.replace("\\r\\n", "\\n").replace("\\r", "\\n")', script)
 
+    def test_release_preflight_allows_expected_missing_release(self):
+        publisher = (
+            ROOT / "scripts" / "release" / "publish-release.ps1"
+        ).read_text(encoding="utf-8")
+        self.assertIn('$ErrorActionPreference = "Continue"', publisher)
+        self.assertIn("$releaseExists = $LASTEXITCODE -eq 0", publisher)
+        self.assertIn("$tagExists = $LASTEXITCODE -eq 0", publisher)
+        self.assertIn(
+            "$ErrorActionPreference = $previousErrorActionPreference", publisher
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
