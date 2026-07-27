@@ -53,7 +53,21 @@
       "summary": "Verified that rmw_fastrtps packages depend on Debian libfastrtps-dev/libfastcdr-dev while the pinned source-built plain-CMake prefixes are absent from the package inventory."
     }
   ],
-  "errors": [],
+  "errors": [
+    {
+      "stage": "native-runtime-smoke",
+      "category": "publisher-discovery-wait",
+      "symptom": "The first corrective native gate built, audited, installed, and configured the clean Fast DDS consumer, then ros2 topic pub --once timed out with exit 124 while waiting for a matching subscriber.",
+      "root_cause": "ros2 topic pub defaults to waiting for one matching subscription when --once is used; the gate intended to validate publisher initialization without requiring a separate subscriber.",
+      "correction": "Set --wait-matching-subscriptions 0 for the bounded standalone Fast DDS publisher smoke.",
+      "prevention": "Regression-test the explicit no-subscriber discovery-wait contract in verify-native.sh.",
+      "tracked_minutes_lost": 5,
+      "machine_minutes_lost": 0,
+      "invalidated_evidence": [
+        "iros2j-12ed1df58927 native gate result"
+      ]
+    }
+  ],
   "actual": {
     "clickup_tracked_minutes": null,
     "calendar_minutes": null,

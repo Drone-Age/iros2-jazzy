@@ -112,7 +112,7 @@ env -i HOME="${HOME}" PATH="/usr/bin:/bin" \
     RMW_IMPLEMENTATION=rmw_fastrtps_cpp ros2 topic list >/dev/null
     RMW_IMPLEMENTATION=rmw_fastrtps_cpp timeout 20 \
       ros2 topic pub /iros2j_fastdds_smoke std_msgs/msg/String \
-      '{data: fastdds}' --once >/dev/null
+      '{data: fastdds}' --once --wait-matching-subscriptions 0 >/dev/null
   "
 
 printf 'Clean iros2j APT installation verified for %s (%s).\n' "${version}" "${tag}"

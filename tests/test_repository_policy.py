@@ -145,6 +145,7 @@ class RepositoryPolicyTests(unittest.TestCase):
         self.assertIn("DomainParticipantFactory::get_instance()", verify)
         self.assertIn("RMW_IMPLEMENTATION=rmw_fastrtps_cpp ros2 topic list", verify)
         self.assertIn("ros2 topic pub /iros2j_fastdds_smoke", verify)
+        self.assertIn("--wait-matching-subscriptions 0", verify)
 
 
 if __name__ == "__main__":
