@@ -1,5 +1,13 @@
 # Changelog
 
+## Process 1.5.5
+
+- Excluded ROS package-group identifiers from Debian runtime dependencies;
+  their Bloom-compatible dependencies are already explicitly declared.
+- Treated Gazebo libraries bundled by source-building vendor packages as
+  internal payload and RTI Connext as an optional proprietary backend.
+- Added regression coverage for Debian 13 dependency classification.
+
 ## Process 1.5.4
 
 - Included isolated vendor packages that intentionally omit an ament-index

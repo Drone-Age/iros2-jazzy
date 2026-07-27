@@ -11,8 +11,8 @@
   "versions": {
     "product": "1.0.1",
     "product_tag": "v2.1.0.1",
-    "process": "1.5.4",
-    "process_tag": "process-v1.5.4"
+    "process": "1.5.5",
+    "process_tag": "process-v1.5.5"
   },
   "estimates": [
     {
@@ -159,6 +159,17 @@
       "root_cause": "The exit-code path was relative and the worker subshell had changed into the cloned repository.",
       "correction": "Resolve the remote run root to an absolute path before entering the worker subshell.",
       "prevention": "Require dispatcher regression coverage for an absolute exit-code destination.",
+      "tracked_minutes_lost": null,
+      "machine_minutes_lost": 0,
+      "invalidated_evidence": []
+    },
+    {
+      "stage": "native-packaging",
+      "category": "debian-runtime-dependency-classification",
+      "symptom": "Packaging next stopped on gz-cmake3, and a full preflight found 11 rosdep keys without Debian Trixie mappings.",
+      "root_cause": "Package groups, source-bundled Gazebo libraries, and an optional proprietary RTI backend were incorrectly treated as mandatory external Debian runtime packages.",
+      "correction": "Exclude group identifiers, bundled Gazebo payload, and optional RTI Connext from hard Debian Depends.",
+      "prevention": "Preflight every unique external key and regression-test each non-system dependency category.",
       "tracked_minutes_lost": null,
       "machine_minutes_lost": 0,
       "invalidated_evidence": []

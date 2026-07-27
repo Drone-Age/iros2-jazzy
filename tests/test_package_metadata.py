@@ -101,6 +101,29 @@ class PackageMetadataTests(unittest.TestCase):
                 (),
             )
 
+    def test_non_package_groups_and_bundled_or_optional_backends_are_ignored(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            install_base = Path(temporary)
+            prefix = install_base / "fixture"
+            package_share = prefix / "share" / "fixture"
+            package_share.mkdir(parents=True)
+            (package_share / "package.xml").write_text(
+                PACKAGE_XML.format(
+                    name="fixture",
+                    dependencies="""
+  <exec_depend>python3</exec_depend>
+  <group_depend>launch_frontend_packages</group_depend>
+  <depend condition="$GZ_BUILD_FROM_SOURCE != ''">gz-cmake3</depend>
+  <depend>rti-connext-dds-6.0.1</depend>
+""",
+                ),
+                encoding="utf-8",
+            )
+
+            package = inventory(install_base, "1.0.1-1+deb13")[0]
+
+            self.assertEqual(package.external_dependencies, ("python3",))
+
 
 if __name__ == "__main__":
     unittest.main()

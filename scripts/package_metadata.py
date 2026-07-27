@@ -17,8 +17,8 @@ DEPENDENCY_TAGS = {
     "exec_depend",
     "build_export_depend",
     "buildtool_export_depend",
-    "group_depend",
 }
+OPTIONAL_EXTERNAL_DEPENDENCIES = {"rti-connext-dds-6.0.1"}
 DEBIAN_NAME = re.compile(r"^[a-z0-9][a-z0-9+.-]+$")
 
 
@@ -56,8 +56,14 @@ def direct_ros_dependencies(package_xml: Path) -> set[str]:
                 continue
             if "==" in compact and "==jazzy" not in compact:
                 continue
+        # Gazebo vendor packages build and install these libraries into their
+        # own isolated prefix; Debian 13 does not provide matching gz packages.
+        if "$GZ_BUILD_FROM_SOURCE" in condition:
+            continue
         if element.tag in DEPENDENCY_TAGS and element.text:
-            dependencies.add(element.text.strip())
+            dependency = element.text.strip()
+            if dependency not in OPTIONAL_EXTERNAL_DEPENDENCIES:
+                dependencies.add(dependency)
     return dependencies
 
 
