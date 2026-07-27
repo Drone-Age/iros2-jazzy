@@ -16,4 +16,6 @@ issue forms, валідаторів, скриптів публікації аб�
    використання зміненого процесу для продуктового релізу.
 
 Реалізація продукту має відповідати `docs/PACKAGE_POLICY.md` та
-`docs/RELEASE_PROCESS.md`.
+`docs/RELEASE_PROCESS.md`. Кожне implementation-завдання також має
+дотримуватися пов'язаного GitHub/ClickUp workflow з
+`docs/TASK_MANAGEMENT.md`.

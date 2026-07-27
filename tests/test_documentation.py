@@ -9,6 +9,7 @@ NORMATIVE = [
     "docs/VERSIONING.md",
     "docs/PACKAGE_POLICY.md",
     "docs/RELEASE_PROCESS.md",
+    "docs/TASK_MANAGEMENT.md",
     "docs/V1_MIGRATION_PLAN.md",
 ]
 
@@ -58,6 +59,19 @@ class DocumentationTests(unittest.TestCase):
         self.assertIn("package version `1.0.0`", versioning)
         self.assertIn("v2.1.0.0", versioning)
         self.assertIn("`1.0.0-1+deb13`", versioning)
+
+    def test_new_sessions_load_task_management_policy(self):
+        agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        policy = (ROOT / "docs" / "TASK_MANAGEMENT.md").read_text(encoding="utf-8")
+        self.assertIn("docs/TASK_MANAGEMENT.md", agents)
+        for required in (
+            "one open GitHub Issue",
+            "one ClickUp task",
+            "reciprocal links",
+            "New-session startup protocol",
+            "exact commit SHA",
+        ):
+            self.assertIn(required, policy)
 
 
 if __name__ == "__main__":

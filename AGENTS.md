@@ -4,6 +4,9 @@
 
 - Read `docs/README.md` before changing packaging, build, test, or release
   behavior.
+- Before starting or resuming implementation work, read
+  `docs/TASK_MANAGEMENT.md` and identify the linked GitHub Issue and ClickUp
+  task. If either link is missing, establish it before reporting progress.
 - English normative documents are the canonical source for machine-facing
   interpretation. Ukrainian `.uk.md` files are mandatory human-facing
   counterparts.
@@ -28,3 +31,12 @@
 Changes to policies, required checklists, release metadata, validators,
 publication scripts, issue forms, or automation must follow
 `docs/DOCUMENTATION_POLICY.md` and `docs/VERSIONING.md`.
+
+## Work tracking
+
+- GitHub is the source of truth for repository state, commits, tags, pull
+  requests, release evidence, and technical definition of done.
+- ClickUp is the source of truth for planning status, business scope,
+  ownership, priorities, blockers, and cross-component visibility.
+- Update both linked work items at every material checkpoint according to
+  `docs/TASK_MANAGEMENT.md`.

@@ -14,6 +14,8 @@ release-процесу. Англійська версія є канонічно�
   [українською](PACKAGE_POLICY.uk.md)
 - [Release-процес](RELEASE_PROCESS.md) /
   [українською](RELEASE_PROCESS.uk.md)
+- [Керування задачами та продовження між сесіями](TASK_MANAGEMENT.md) /
+  [українською](TASK_MANAGEMENT.uk.md)
 - [План переходу v1](V1_MIGRATION_PLAN.md) /
   [українською](V1_MIGRATION_PLAN.uk.md)
 

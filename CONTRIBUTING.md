@@ -15,4 +15,5 @@ They must:
    the changed process is used for a product release.
 
 Product implementation work must satisfy `docs/PACKAGE_POLICY.md` and
-`docs/RELEASE_PROCESS.md`.
+`docs/RELEASE_PROCESS.md`. Every implementation task must also follow the
+linked GitHub/ClickUp workflow in `docs/TASK_MANAGEMENT.md`.

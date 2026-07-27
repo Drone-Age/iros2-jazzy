@@ -14,6 +14,8 @@ mandatory maintained translations.
   [Ukrainian](PACKAGE_POLICY.uk.md)
 - [Release process](RELEASE_PROCESS.md) /
   [Ukrainian](RELEASE_PROCESS.uk.md)
+- [Task management and cross-session continuity](TASK_MANAGEMENT.md) /
+  [Ukrainian](TASK_MANAGEMENT.uk.md)
 - [v1 migration plan](V1_MIGRATION_PLAN.md) /
   [Ukrainian](V1_MIGRATION_PLAN.uk.md)
 

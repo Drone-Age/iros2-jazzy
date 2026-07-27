@@ -1,5 +1,12 @@
 # Changelog
 
+## Process 1.2.0 (unreleased)
+
+- Added the mandatory GitHub/ClickUp task-management policy.
+- Defined reciprocal linking, source-of-truth ownership, status mapping,
+  checkpoint evidence, blocker handling, and cross-session continuation.
+- Made `AGENTS.md` load the task-management policy for every new agent session.
+
 ## 1.0.1 (unreleased)
 
 - Started the native Debian 13 ARM64 `iros2j` package-line implementation.
