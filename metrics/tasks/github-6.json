@@ -61,6 +61,17 @@
       "evidence": "https://github.com/Drone-Age/iros2_0/tree/process-v1.3.0",
       "reusable": true,
       "summary": "Added ClickUp timer/estimate rules, historical metrics, calibration, error records, and completion reports."
+    },
+    {
+      "stage": "planning",
+      "category": "scrumneo-review",
+      "result": "BLOCKED",
+      "attempt": 1,
+      "duration_minutes": 1,
+      "commit": "60eae05c33afcbc80e1db58f63f24116a5870819",
+      "evidence": "https://github.com/Drone-Age/iros2_0/issues/6#issuecomment-5090088264",
+      "reusable": false,
+      "summary": "ScrumNEO was not present in the linked task, comments, attachments, linked work, workspace search, repository, or GitHub Issue."
     }
   ],
   "errors": [
