@@ -38,7 +38,7 @@ ros-jazzy-<normalized-name>  ->  iros2j-<normalized-name>
 | `rviz2` / `ros-jazzy-rviz2` | `iros2j-rviz2` |
 
 ROS-залежність `<depend>rclcpp</depend>` перетворюється на точну залежність
-snapshot, наприклад `iros2j-rclcpp (= 1.0.0-1+deb13)`.
+snapshot, наприклад `iros2j-rclcpp (= 1.0.1-1+deb13)`.
 
 ## Метапакети
 

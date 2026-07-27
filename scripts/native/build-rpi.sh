@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-workspace="${1:-$HOME/iros2_0-native/work}"
-install_base="${2:-/opt/iros2_0/jazzy}"
-artifacts="${3:-$HOME/iros2_0-native/artifacts}"
+workspace="${1:-$HOME/iros2j-native/work}"
+install_base="${2:-${workspace}/install}"
+artifacts="${3:-$HOME/iros2j-native/artifacts}"
 venv_bin="${IROS2_VENV_BIN:-}"
 
 cd "${workspace}"
@@ -11,13 +11,13 @@ mkdir -p "${artifacts}"
 rm -f "${artifacts}/build.ok" "${artifacts}/build.failed"
 if [[ -n "${venv_bin}" ]]; then
   export PATH="${venv_bin}:${PATH}"
-elif [[ -x "$HOME/iros2_0-native/.venv/bin/vcs" ]]; then
-  export PATH="$HOME/iros2_0-native/.venv/bin:${PATH}"
+elif [[ -x "$HOME/iros2j-native/.venv/bin/vcs" ]]; then
+  export PATH="$HOME/iros2j-native/.venv/bin:${PATH}"
 fi
 
 command -v vcs >/dev/null
 
-selection_args=(--packages-up-to ros_base rviz2)
+selection_args=(--packages-up-to ros_base rviz2 vision_opencv)
 if [[ "${IROS2_RESUME_BUILD:-1}" == "1" ]]; then
   selection_args=(--packages-skip-build-finished "${selection_args[@]}")
 fi
@@ -51,6 +51,7 @@ env -i HOME="${HOME}" PATH="/usr/bin:/bin" \
     source '${install_base}/setup.bash'
     ros2 pkg prefix ros_base
     ros2 pkg prefix rviz2
+    ros2 pkg prefix vision_opencv
   "
 
 touch "${artifacts}/build.ok"

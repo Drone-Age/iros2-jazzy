@@ -1,8 +1,8 @@
 # `iros2j` release process
 
-This is the mandatory target process for v1 product releases. Until the
-migration checklist is complete, the repository remains on the legacy 0.1.x
-implementation and must not publish `v2.1.0.0`.
+This is the mandatory process for v1 product releases. The immutable
+`v2.1.0.0` baseline already exists; the first complete package implementation
+must pass this process as package version `1.0.1` and tag `v2.1.0.1`.
 
 ## 1. Open and pin the release
 
@@ -56,6 +56,21 @@ VINS-NEO build, installation, and smoke testing are explicitly outside this
 repository's gate. AMD64, Docker, and QEMU checks must not be added to the v1
 release sequence.
 
+After the native run passes, finalize the draft manifest with artifact hashes
+and the exact build commit:
+
+```bash
+python3 scripts/release/finalize-release.py \
+  --manifest manifests/iros2j-<version>.json \
+  --artifacts artifacts \
+  --build-commit <native-build-commit>
+```
+
+Commit and push that finalized metadata snapshot. On the same native ARM64
+host, create `native-gate.json` for the finalized release commit with
+`create-native-gate.py`. The build commit and release commit are recorded
+separately; only release metadata may differ between them.
+
 ## 4. Publish
 
 Publication tooling must bind the successful native evidence to the exact
@@ -63,7 +78,7 @@ source commit, manifest hash, APT repository snapshot, and artifact hashes. It
 must reject an existing tag or release.
 
 Only after all gates pass may it create the generation-qualified product tag
-defined by `VERSIONING.md` (for package version `1.0.0`, `v2.1.0.0`) at that
+defined by `VERSIONING.md` (for package version `1.0.1`, `v2.1.0.1`) at that
 commit and upload the APT bootstrap/repository bundle, checksums, manifests,
 SBOM, logs/evidence, and committed release notes. The tag and release assets
 are immutable.

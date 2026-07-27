@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-workspace="${1:-$HOME/iros2_0-native/work}"
+workspace="${1:-$HOME/iros2j-native/work}"
 workspace="$(realpath -m "${workspace}")"
-allowed_root="$(realpath -m "$HOME/iros2_0-native")"
+allowed_root="$(realpath -m "$HOME/iros2j-native")"
 
 case "${workspace}" in
   "${allowed_root}"/*) ;;

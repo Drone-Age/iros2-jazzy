@@ -17,9 +17,9 @@ mandatory maintained translations.
 - [v1 migration plan](V1_MIGRATION_PLAN.md) /
   [Ukrainian](V1_MIGRATION_PLAN.uk.md)
 
-The older `*_UK.md` documents describe the published `iros2-0` 0.1.x line.
-They are retained as historical operational documentation and do not define
-the `iros2j` v1 target.
+Legacy 0.1.x Docker, AMD64, monolithic packaging, installation, and
+verification instructions were removed when the `iros2j` implementation
+started. Published tags retain the historical source.
 
 ## Process model
 

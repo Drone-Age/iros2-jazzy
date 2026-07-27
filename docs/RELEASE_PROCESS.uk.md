@@ -1,8 +1,8 @@
 # Release-процес `iros2j`
 
-Це обов'язковий цільовий процес для продуктових релізів v1. До завершення
-контрольного списку міграції репозиторій залишається на legacy-реалізації
-0.1.x і не може публікувати `v2.1.0.0`.
+Це обов'язковий процес для продуктових релізів v1. Незмінний baseline
+`v2.1.0.0` уже існує; перша повна реалізація пакетів має пройти цей процес як
+версія пакетів `1.0.1` і тег `v2.1.0.1`.
 
 ## 1. Відкрити й зафіксувати release
 
@@ -56,6 +56,21 @@ Gate має:
 репозиторію. Перевірки AMD64, Docker і QEMU не можна додавати до release
 послідовності v1.
 
+Після успішного native run фіналізуйте draft manifest, додавши artifact hashes
+і точний build commit:
+
+```bash
+python3 scripts/release/finalize-release.py \
+  --manifest manifests/iros2j-<version>.json \
+  --artifacts artifacts \
+  --build-commit <native-build-commit>
+```
+
+Закомітьте й push фінальний metadata snapshot. На тому самому нативному ARM64
+host створіть `native-gate.json` для фінального release commit за допомогою
+`create-native-gate.py`. Build commit і release commit записуються окремо; між
+ними можуть відрізнятися лише release metadata.
+
 ## 4. Публікація
 
 Інструмент публікації має прив'язувати успішний native evidence до точного
@@ -64,7 +79,7 @@ source commit, manifest hash, snapshot APT repository та artifact hashes. Ві
 
 Лише після проходження всіх gate дозволено створити на цьому коміті
 кваліфікований поколінням продуктовий тег за правилами `VERSIONING.md` (для
-версії пакета `1.0.0` — `v2.1.0.0`) та завантажити APT
+версії пакета `1.0.1` — `v2.1.0.1`) та завантажити APT
 bootstrap/repository bundle, checksums, manifests, SBOM, logs/evidence і
 закомічені release notes. Тег і release assets незмінні.
 

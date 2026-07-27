@@ -38,7 +38,7 @@ from the custom package name. Examples:
 | `rviz2` / `ros-jazzy-rviz2` | `iros2j-rviz2` |
 
 ROS dependency `<depend>rclcpp</depend>` maps to an exact snapshot dependency,
-for example `iros2j-rclcpp (= 1.0.0-1+deb13)`.
+for example `iros2j-rclcpp (= 1.0.1-1+deb13)`.
 
 ## Metapackages
 

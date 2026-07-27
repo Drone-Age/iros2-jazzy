@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-artifacts="${1:-$HOME/iros2_0-native/artifacts}"
+artifacts="${1:-$HOME/iros2j-native/artifacts}"
 log_file="${2:-${artifacts}/logs/native-build.log}"
 
 echo "STATUS"

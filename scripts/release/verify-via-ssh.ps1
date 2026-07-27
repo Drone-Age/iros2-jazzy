@@ -28,7 +28,10 @@ if ([string]::IsNullOrWhiteSpace($githubRepo)) {
     $githubRepo = "Drone-Age/iros2_0"
 }
 if ([string]::IsNullOrWhiteSpace($packageVersion)) {
-    $packageVersion = $releaseTag.TrimStart("v") + "-1+deb13"
+    if ($releaseTag -notmatch '^v2\.(\d+\.\d+\.\d+)$') {
+        throw "Release tag must match v2.MAJOR.MINOR.PATCH."
+    }
+    $packageVersion = $Matches[1]
 }
 
 Assert-SafeValue "IROS2_SSH_HOST" $hostName
@@ -48,16 +51,16 @@ if (-not [string]::IsNullOrWhiteSpace($sshKey)) {
 }
 
 $nativeScript = Join-Path $PSScriptRoot "verify-native.sh"
-& scp @scpOptions $nativeScript "${target}:/tmp/iros2-verify-native.sh"
+& scp @scpOptions $nativeScript "${target}:/tmp/iros2j-verify-native.sh"
 if ($LASTEXITCODE -ne 0) { throw "Failed to upload native verifier." }
 
 $remoteCommand = @(
-    "chmod +x /tmp/iros2-verify-native.sh &&",
+    "chmod +x /tmp/iros2j-verify-native.sh &&",
     "env",
     "IROS2_GITHUB_REPO='$githubRepo'",
     "IROS2_RELEASE_TAG='$releaseTag'",
     "IROS2_PACKAGE_VERSION='$packageVersion'",
-    "bash /tmp/iros2-verify-native.sh"
+    "bash /tmp/iros2j-verify-native.sh"
 ) -join " "
 
 & ssh @sshOptions $target $remoteCommand

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-workspace="${1:-$HOME/iros2_0-native/work}"
-artifacts="${2:-$HOME/iros2_0-native/artifacts}"
+workspace="${1:-$HOME/iros2j-native/work}"
+artifacts="${2:-$HOME/iros2j-native/artifacts}"
 
 as_root() {
   if (( EUID == 0 )); then
@@ -16,7 +16,7 @@ cd "${workspace}"
 mkdir -p "${artifacts}"
 
 colcon list \
-  --packages-up-to ros_base rviz2 \
+  --packages-up-to ros_base rviz2 vision_opencv \
   --paths-only > "${artifacts}/selected-paths.txt"
 
 if [[ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]]; then

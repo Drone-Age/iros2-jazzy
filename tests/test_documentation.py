@@ -48,7 +48,7 @@ class DocumentationTests(unittest.TestCase):
             "AMD64 is not built",
             "VINS-NEO",
             "iros2j-ros-core",
-            "1.0.0-1+deb13",
+            "1.0.1-1+deb13",
         ):
             self.assertIn(required, regulations)
 

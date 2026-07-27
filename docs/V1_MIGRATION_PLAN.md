@@ -1,6 +1,6 @@
 # `iros2j` v1 migration plan
 
-This checklist is the definition of readiness for `v2.1.0.0`. Checked items must
+This checklist is the definition of readiness for `v2.1.0.1`. Checked items must
 be supported by committed code, tests, or release evidence.
 
 ## Packaging
@@ -38,9 +38,8 @@ be supported by committed code, tests, or release evidence.
 ## Documentation and release
 
 - [ ] Replace legacy user installation instructions with the APT workflow.
-- [ ] Add versioned `v2.1.0.0` release notes and final package inventory.
-- [ ] Set `VERSION` to `1.0.0` only in the actual release preparation change;
-      use repository tag `v2.1.0.0`.
+- [ ] Add versioned `v2.1.0.1` release notes and final package inventory.
+- [ ] Set `VERSION` to `1.0.1` and use repository tag `v2.1.0.1`.
 - [ ] Pass the complete native gate on the exact pushed release commit.
-- [ ] Publish immutable `v2.1.0.0` and complete clean-host post-release
+- [ ] Publish immutable `v2.1.0.1` and complete clean-host post-release
       verification.

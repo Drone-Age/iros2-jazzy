@@ -1,104 +1,65 @@
-# IROS2_0
+# iros2j
 
-> **Стан репозиторію:** поточний опублікований реліз `0.1.2` нижче є legacy.
-> Погоджена ціль `v2.1.0.0` — пакетна лінія `iros2j`, лише нативний Debian 13
-> ARM64, без AMD64 і Docker. Реалізація переходу ще не завершена; нормативні
-> вимоги та контрольний список наведено в
-> [індексі документації](docs/README.uk.md).
+`iros2j` — пакетна збірка ROS 2 Jazzy для Debian 13 Trixie ARM64. Кожен
+ROS-пакет постачається окремим Debian-пакетом `iros2j-*`, а встановлення
+виконується через підписаний APT repository.
 
-IROS2_0 — готовий пакет ROS 2 Jazzy для Debian 13 Trixie на AMD64 та для
-Raspberry Pi 5 на ARM64. Після встановлення команди `ros2` і `rviz2` доступні у
-звичайному терміналі без ручного налаштування середовища.
+## Стан
 
-## Системні вимоги
+Поточна розроблювана версія пакетів: `1.0.1`.
 
-- AMD64-комп'ютер або Raspberry Pi 5;
-- Debian 13 Trixie AMD64 або ARM64;
-- доступ до інтернету;
-- команди `curl`, `sudo` та `apt`.
+Запланований Git release tag: `v2.1.0.1`, де перша `2` позначає ROS 2, а
+`1.0.1` є версією пакетної лінії `iros2j`.
 
-Перевірити систему:
+Підтримується лише нативний Debian 13 Trixie ARM64 (`aarch64`). Docker,
+AMD64, QEMU та перевірка VINS-NEO не входять до цього проєкту.
 
-```bash
-uname -m
-. /etc/os-release
-printf '%s %s\n' "$ID" "$VERSION_CODENAME"
-```
+## Пакетна модель
 
-Очікуваний результат: архітектура `x86_64` або `aarch64` та система `debian trixie`.
-
-## Швидке встановлення останнього релізу
-
-Виконайте в терміналі:
-
-```bash
-mkdir -p /tmp/iros2-install
-cd /tmp/iros2-install
-
-arch="$(dpkg --print-architecture)"
-curl -fLO "https://github.com/Drone-Age/iros2_0/releases/latest/download/iros2-0_latest_${arch}.deb"
-curl -fLO "https://github.com/Drone-Age/iros2_0/releases/latest/download/iros2-0_latest_${arch}.deb.sha256"
-
-sha256sum -c "iros2-0_latest_${arch}.deb.sha256"
-
-sudo apt update
-sudo apt install "./iros2-0_latest_${arch}.deb"
-```
-
-Під час встановлення APT автоматично додасть необхідні системні залежності.
-
-## Перевірка
-
-```bash
-ros2 --help
-rviz2
-```
-
-Для перевірки встановленої версії:
-
-```bash
-dpkg-query -W iros2-0
-```
-
-## Використання
-
-Для звичайного запуску використовуйте `ros2` і `rviz2` без додаткових
-команд:
-
-```bash
-ros2 topic list
-rviz2
-```
-
-Для розробки, `colcon` workspace або ROS overlay активуйте повне середовище:
-
-```bash
-source /opt/iros2_0/jazzy/setup.bash
-```
-
-За бажанням можна один раз увімкнути автоматичну активацію для свого
-Bash-користувача:
-
-```bash
-iros2-enable-bash
-```
-
-## Видалення
-
-```bash
-sudo apt purge iros2-0
-sudo apt autoremove
-```
-
-Якщо раніше виконувалась команда `iros2-enable-bash`, видаліть із
-`~/.bashrc` блок між рядками:
+Ім'я офіційного пакета перетворюється детерміновано:
 
 ```text
-# >>> iros2-0 >>>
-# <<< iros2-0 <<<
+ros-jazzy-<package>  ->  iros2j-<package>
 ```
 
-## Релізи
+Приклади: `iros2j-rclcpp`, `iros2j-sensor-msgs`, `iros2j-cv-bridge`,
+`iros2j-ros-core`, `iros2j-ros-base` та `iros2j-rviz2`.
 
-Остання опублікована версія доступна на сторінці
-[GitHub Releases](https://github.com/Drone-Age/iros2_0/releases/latest).
+Усі файли встановлюються під спільний prefix `/opt/iros2j`. Внутрішні
+залежності пакетів фіксуються на точну версію одного snapshot.
+
+## Нативна збірка
+
+На чистому ARM64 host Debian 13:
+
+```bash
+git clone https://github.com/Drone-Age/iros2_0.git
+cd iros2_0
+
+IROS2_INSTALL_DEPENDENCIES=1 \
+IROS2_GPG_KEY=<release-key-id> \
+  ./scripts/native/release-rpi.sh
+```
+
+Скрипт використовує exact source lock, збирає isolated ROS prefixes, створює
+окремі `.deb`, перевіряє package metadata, формує підписаний APT repository та
+SPDX SBOM.
+
+## Перевірка локального repository bundle
+
+```bash
+./scripts/release/verify-native.sh \
+  artifacts/iros2j-apt_trixie_arm64.tar.gz
+```
+
+Перевірка виконує APT-встановлення метапакетів і ROS/RViz smoke tests у чистому
+shell. Для release необхідний повний native gate за
+[регламентом](docs/RELEASE_PROCESS.uk.md).
+
+## Документація
+
+- [Індекс нормативної документації](docs/README.uk.md)
+- [Політика пакетів](docs/PACKAGE_POLICY.uk.md)
+- [Release-процес](docs/RELEASE_PROCESS.uk.md)
+- [План міграції](docs/V1_MIGRATION_PLAN.uk.md)
+- [Версії та теги](docs/VERSIONING.uk.md)

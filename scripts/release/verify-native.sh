@@ -1,103 +1,69 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-repo="${IROS2_GITHUB_REPO:-Drone-Age/iros2_0}"
-tag="${IROS2_RELEASE_TAG:-}"
-verify_installed_only="${IROS2_VERIFY_INSTALLED_ONLY:-0}"
-if [[ "${verify_installed_only}" != "1" && -z "${tag}" ]]; then
-  echo "Set IROS2_RELEASE_TAG, for example v0.1.0." >&2
-  exit 1
-fi
-version="${IROS2_PACKAGE_VERSION:-${tag#v}-1+deb13}"
-allow_remove_prefix="${IROS2_ALLOW_REMOVE_PREFIX:-0}"
-architecture="$(dpkg --print-architecture)"
-case "${architecture}" in
-  amd64) expected_machine="x86_64" ;;
-  arm64) expected_machine="aarch64" ;;
-  *)
-    echo "Unsupported verification architecture: ${architecture}" >&2
-    exit 1
-    ;;
-esac
-asset="iros2-0_${version}_${architecture}.deb"
-release_url="https://github.com/${repo}/releases/download/${tag}"
-work_dir="$(mktemp -d)"
-trap 'rm -rf -- "${work_dir}"' EXIT
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+version="${IROS2_PACKAGE_VERSION:-$(<"${repo_root}/VERSION")}"
+tag="${IROS2_RELEASE_TAG:-v2.${version}}"
+repository="${IROS2_REPOSITORY:-Drone-Age/iros2_0}"
+archive="${1:-}"
 
-as_root() {
-  if (( EUID == 0 )); then
-    "$@"
-  else
-    sudo "$@"
-  fi
-}
-
-clean_shell() {
-  env -i \
-    HOME="${HOME}" \
-    USER="${USER:-$(id -un)}" \
-    LOGNAME="${LOGNAME:-$(id -un)}" \
-    SHELL=/bin/bash \
-    TERM="${TERM:-dumb}" \
-    DISPLAY="${DISPLAY:-}" \
-    XAUTHORITY="${XAUTHORITY:-}" \
-    WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-}" \
-    XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-}" \
-    DBUS_SESSION_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS:-}" \
-    PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
-    bash --noprofile --norc -c "$1"
-}
-
-[[ "$(uname -m)" == "${expected_machine}" ]]
+[[ "$(uname -m)" == "aarch64" ]]
 source /etc/os-release
 [[ "${ID}" == "debian" && "${VERSION_CODENAME}" == "trixie" ]]
 
-if [[ "${verify_installed_only}" != "1" ]]; then
-  curl -fL "${release_url}/${asset}" -o "${work_dir}/${asset}"
-  curl -fL "${release_url}/SHA256SUMS" -o "${work_dir}/SHA256SUMS"
-(
-  cd "${work_dir}"
-    awk -v asset="${asset}" '
-      $2 == asset || $2 == "./" asset {print $1 "  " asset}
-    ' SHA256SUMS | sha256sum -c -
-  )
+as_root() {
+  if ((EUID == 0)); then "$@"; else sudo "$@"; fi
+}
 
-  if dpkg-query -W -f='${db:Status-Status}' iros2-0 2>/dev/null |
-     grep -q '^installed$'; then
-    as_root apt-get purge -y iros2-0
-  fi
+temporary="$(mktemp -d /tmp/iros2j-verify.XXXXXX)"
+trap 'rm -rf -- "${temporary}"' EXIT
 
-  if [[ -e /opt/iros2_0/jazzy ]]; then
-    if [[ "${allow_remove_prefix}" != "1" ]]; then
-      echo "/opt/iros2_0/jazzy remains outside dpkg control." >&2
-      echo "Use a clean target or set IROS2_ALLOW_REMOVE_PREFIX=1 explicitly." >&2
-      exit 1
-    fi
-    as_root rm -rf -- /opt/iros2_0/jazzy
-  fi
-
-  as_root apt-get update
-  as_root apt-get install -y "${work_dir}/${asset}"
+if [[ -z "${archive}" ]]; then
+  archive="${temporary}/iros2j-apt_trixie_arm64.tar.gz"
+  curl --fail --location \
+    "https://github.com/${repository}/releases/download/${tag}/iros2j-apt_trixie_arm64.tar.gz" \
+    --output "${archive}"
+  curl --fail --location \
+    "https://github.com/${repository}/releases/download/${tag}/iros2j-apt_trixie_arm64.tar.gz.sha256" \
+    --output "${archive}.sha256"
 fi
 
-dpkg-query -W -f='${Package} ${Version} ${Architecture} ${db:Status-Status}\n' \
-  iros2-0
+archive="$(realpath "${archive}")"
+if [[ -f "${archive}.sha256" ]]; then
+  (cd "$(dirname "${archive}")" && sha256sum -c "$(basename "${archive}").sha256")
+fi
+tar -C "${temporary}" -xzf "${archive}"
+apt_root="${temporary}/apt-repository"
+chmod 0755 "${temporary}"
+chmod -R a+rX "${apt_root}"
+gpg --dearmor < "${apt_root}/iros2j-archive-keyring.asc" \
+  > "${temporary}/iros2j-archive-keyring.gpg"
+as_root install -m 0644 "${temporary}/iros2j-archive-keyring.gpg" \
+  /usr/share/keyrings/iros2j-archive-keyring.gpg
+printf 'deb [arch=arm64 signed-by=/usr/share/keyrings/iros2j-archive-keyring.gpg] file:%s trixie main\n' \
+  "${apt_root}" |
+  as_root tee /etc/apt/sources.list.d/iros2j.list >/dev/null
 
-# Package-owned wrappers must work without an inherited ROS environment.
-clean_shell '
-  set -e
-  test -z "${ROS_DISTRO:-}"
-  test "$(command -v ros2)" = /usr/bin/ros2
-  ros2 --help >/dev/null
-  ros2 pkg prefix ros_base
-  ros2 doctor --report >/dev/null
-'
+as_root apt-get update
+if dpkg-query -W -f='${db:Status-Status}' iros2-0 2>/dev/null |
+  grep -q '^installed$'; then
+  as_root apt-get purge -y iros2-0
+fi
+as_root apt-get install -y \
+  iros2j-ros-base \
+  iros2j-vision-opencv \
+  iros2j-rviz2
 
-clean_shell '
-  set -e
-  source /opt/iros2_0/jazzy/setup.bash
-  test "$ROS_DISTRO" = jazzy
-  command -v colcon >/dev/null
-'
+env -i HOME="${HOME}" PATH="/usr/bin:/bin" \
+  bash --noprofile --norc -c '
+    source /opt/iros2j/setup.bash
+    test "${ROS_DISTRO}" = jazzy
+    ros2 pkg prefix ros_core
+    ros2 pkg prefix ros_base
+    ros2 pkg prefix vision_opencv
+    ros2 pkg prefix rviz2
+    ros2 --help >/dev/null
+    QT_QPA_PLATFORM=offscreen rviz2 --help >/dev/null
+  '
 
-echo "IROS2_0 native release verification PASSED."
+printf 'Clean iros2j APT installation verified for %s (%s).\n' "${version}" "${tag}"

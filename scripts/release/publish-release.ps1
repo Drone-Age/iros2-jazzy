@@ -1,22 +1,52 @@
 param(
     [string]$Version = (Get-Content -LiteralPath "VERSION" -Raw).Trim(),
     [string]$Repository = "Drone-Age/iros2_0",
-    [string]$ArtifactsDirectory = "artifacts"
+    [string]$ArtifactsDirectory = "artifacts",
+    [string]$Commit = "HEAD"
 )
 
 $ErrorActionPreference = "Stop"
-$tag = "v$Version"
-$packageVersion = "$Version-1+deb13"
-# Release order is fixed: publish AMD64 first, then ARM64.
-$architectures = @("amd64", "arm64")
-$assetNames = @()
-foreach ($architecture in $architectures) {
-    $assetNames += "iros2-0_${packageVersion}_${architecture}.deb"
-    $assetNames += "iros2-0_latest_${architecture}.deb"
-    $assetNames += "iros2-0_latest_${architecture}.deb.sha256"
-}
-$assetNames += "SHA256SUMS"
+$tag = "v2.$Version"
+$manifestPath = "manifests/iros2j-$Version.json"
+$notesPath = "docs/releases/$tag.md"
+$lockPath = "manifests/iros2j-jazzy.lock.repos"
+$resolvedCommit = (git rev-parse "$Commit^{commit}").Trim()
 
+if ($LASTEXITCODE -ne 0 -or $resolvedCommit -notmatch "^[0-9a-f]{40}$") {
+    throw "Cannot resolve release commit: $Commit"
+}
+if ((git status --porcelain --untracked-files=no)) {
+    throw "Tracked working tree changes must be committed before publication."
+}
+
+python scripts/release/metadata_gate.py $manifestPath
+if ($LASTEXITCODE -ne 0) {
+    throw "Release metadata gate failed."
+}
+python scripts/release/verify-native-gate.py `
+    --gate (Join-Path $ArtifactsDirectory "native-gate.json") `
+    --manifest $manifestPath `
+    --artifacts $ArtifactsDirectory `
+    --commit $resolvedCommit
+if ($LASTEXITCODE -ne 0) {
+    throw "Native gate evidence does not match the release."
+}
+$manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
+if ($manifest.release.status -ne "released") {
+    throw "Manifest status must be released before publication."
+}
+if ($manifest.release.tag -ne $tag) {
+    throw "Manifest tag does not match $tag."
+}
+
+$assetNames = @(
+    "iros2j-apt_trixie_arm64.tar.gz",
+    "iros2j-apt_trixie_arm64.tar.gz.sha256",
+    "SHA256SUMS",
+    "package-inventory.json",
+    "iros2j-$Version.spdx.json",
+    "native-gate.json"
+)
 $assetPaths = foreach ($name in $assetNames) {
     $path = Join-Path $ArtifactsDirectory $name
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
@@ -24,67 +54,40 @@ $assetPaths = foreach ($name in $assetNames) {
     }
     (Resolve-Path -LiteralPath $path).Path
 }
+$assetPaths += (Resolve-Path -LiteralPath $manifestPath).Path
+$assetPaths += (Resolve-Path -LiteralPath $lockPath).Path
 
-foreach ($architecture in $architectures) {
-    Write-Host "Validating release architecture: $architecture"
-    $stableAsset = "iros2-0_latest_${architecture}.deb"
-    $stableChecksum = "${stableAsset}.sha256"
-    $expectedHash = (
-        Get-Content -LiteralPath (Join-Path $ArtifactsDirectory $stableChecksum) -Raw
-    ).Split(" ", [System.StringSplitOptions]::RemoveEmptyEntries)[0]
-    $actualHash = (
-        Get-FileHash -Algorithm SHA256 -LiteralPath (
-            Join-Path $ArtifactsDirectory $stableAsset
-        )
-    ).Hash.ToLowerInvariant()
-
-    if ($actualHash -ne $expectedHash.ToLowerInvariant()) {
-        throw "$architecture stable asset checksum mismatch."
-    }
+$checksumPath = Join-Path $ArtifactsDirectory "iros2j-apt_trixie_arm64.tar.gz.sha256"
+$expectedHash = (
+    Get-Content -LiteralPath $checksumPath -Raw
+).Split(" ", [System.StringSplitOptions]::RemoveEmptyEntries)[0].ToLowerInvariant()
+$actualHash = (
+    Get-FileHash -Algorithm SHA256 -LiteralPath (
+        Join-Path $ArtifactsDirectory "iros2j-apt_trixie_arm64.tar.gz"
+    )
+).Hash.ToLowerInvariant()
+if ($actualHash -ne $expectedHash) {
+    throw "APT repository archive checksum mismatch."
 }
 
-$ghCandidates = @(
-    "C:\Program Files\GitHub CLI\gh.exe",
-    (Join-Path $env:LOCALAPPDATA "Programs\GitHub CLI\gh.exe"),
-    (Join-Path $env:LOCALAPPDATA "Microsoft\WinGet\Links\gh.exe")
-)
-$gh = $ghCandidates |
-    Where-Object { Test-Path -LiteralPath $_ } |
-    Select-Object -First 1
-if (-not $gh) {
-    throw "GitHub CLI was not found."
-}
-
-& $gh auth status
+gh auth status
 if ($LASTEXITCODE -ne 0) {
     throw "GitHub CLI is not authenticated."
 }
-
-$previousErrorActionPreference = $ErrorActionPreference
-$ErrorActionPreference = "SilentlyContinue"
-& $gh release view $tag --repo $Repository *> $null
-$releaseViewExitCode = $LASTEXITCODE
-$ErrorActionPreference = $previousErrorActionPreference
-if ($releaseViewExitCode -eq 0) {
+gh release view $tag --repo $Repository *> $null
+if ($LASTEXITCODE -eq 0) {
     throw "Release $tag already exists."
 }
+git ls-remote --exit-code --tags origin "refs/tags/$tag" *> $null
+if ($LASTEXITCODE -eq 0) {
+    throw "Tag $tag already exists on origin."
+}
 
-$notes = @"
-## IROS2_0 $tag
-
-Debian 13 release built and published in this order:
-1. AMD64 systems.
-2. ARM64 devices such as Raspberry Pi 5.
-
-Assets include versioned Debian packages for both architectures, stable
-latest-download aliases, and SHA-256 checksums.
-"@
-
-& $gh release create $tag @assetPaths `
+gh release create $tag @assetPaths `
     --repo $Repository `
-    --target main `
-    --title "IROS2_0 $tag" `
-    --notes $notes `
+    --target $resolvedCommit `
+    --title "iros2j $Version for Debian 13 ARM64" `
+    --notes-file $notesPath `
     --latest
 if ($LASTEXITCODE -ne 0) {
     throw "GitHub Release creation failed."

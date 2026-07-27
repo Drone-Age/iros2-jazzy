@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.1 (unreleased)
+
+- Started the native Debian 13 ARM64 `iros2j` package-line implementation.
+- Replaced the monolithic package builder with per-ROS-package Debian metadata
+  and exact internal snapshot dependencies.
+- Removed Docker and AMD64 build entrypoints.
+- Locked all Jazzy source repositories to exact commits.
+
+## Process 1.1.0 (unreleased)
+
+- Added deterministic package inventory generation, package audits, and signed
+  APT repository construction.
+- Added exact-source lock and native workspace preparation stages.
+
 ## Process 1.0.0
 
 - Established canonical English and maintained Ukrainian normative documents.

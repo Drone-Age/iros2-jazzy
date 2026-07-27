@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "iros2j release manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "release", "sources", "build", "packages", "excluded", "artifacts"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "release": {
+      "type": "object",
+      "required": ["name", "package_version", "debian_version", "tag", "process_version", "status"],
+      "properties": {
+        "name": {"const": "iros2j"},
+        "package_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+        "debian_version": {"type": "string"},
+        "tag": {"type": "string", "pattern": "^v2\\.[0-9]+\\.[0-9]+\\.[0-9]+$"},
+        "process_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+        "status": {"enum": ["draft", "released"]}
+      }
+    },
+    "sources": {"type": "object"},
+    "build": {"type": "object"},
+    "packages": {"type": "object"},
+    "excluded": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "artifacts": {"type": "object"},
+    "provenance": {
+      "type": "object",
+      "required": ["build_commit"],
+      "properties": {
+        "build_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      }
+    }
+  }
+}
