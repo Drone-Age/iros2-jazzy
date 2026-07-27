@@ -1,5 +1,12 @@
 # Changelog
 
+## Process 1.5.12
+
+- Excluded interpreter-specific Python bytecode from every Debian package.
+- Made every post-install ROS/RViz smoke command fail-fast.
+- Started corrective package release 1.0.2 after post-release verification
+  exposed invalid cached bytecode in 1.0.1.
+
 ## Process 1.5.11
 
 - Made expected GitHub release/tag absence checks non-terminating under

@@ -12,7 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class ReleaseMetadataTests(unittest.TestCase):
     def setUp(self):
-        self.manifest_path = ROOT / "manifests" / "iros2j-1.0.1.json"
+        version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+        self.manifest_path = ROOT / "manifests" / f"iros2j-{version}.json"
         self.manifest = json.loads(self.manifest_path.read_text(encoding="utf-8"))
 
     def write_manifest(self, data: dict) -> Path:

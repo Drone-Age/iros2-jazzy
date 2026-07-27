@@ -54,6 +54,12 @@ for row in "${package_rows[@]}"; do
     "${package_root}/opt/iros2j/${ros_name}"
 
   cp -a "${source_prefix}/." "${package_root}/opt/iros2j/${ros_name}/"
+  # Python bytecode is interpreter-version-specific. Generate it on the target,
+  # never ship caches produced by the build host or a preserved build-state.
+  find "${package_root}/opt/iros2j/${ros_name}" \
+    -type f \( -name '*.pyc' -o -name '*.pyo' \) -delete
+  find "${package_root}/opt/iros2j/${ros_name}" \
+    -type d -name __pycache__ -empty -delete
 
   # colcon generates aggregate setup files at install-base level. ros_environment
   # owns them in the Debian distribution so no two packages claim the same path.

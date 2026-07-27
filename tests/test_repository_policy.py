@@ -108,6 +108,20 @@ class RepositoryPolicyTests(unittest.TestCase):
             "$ErrorActionPreference = $previousErrorActionPreference", publisher
         )
 
+    def test_debian_packages_exclude_python_bytecode(self):
+        builder = (ROOT / "scripts" / "native" / "build-debs.sh").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("-name '*.pyc'", builder)
+        self.assertIn("-name '*.pyo'", builder)
+        self.assertLess(builder.index("-name '*.pyc'"), builder.index("dpkg-deb --build"))
+
+    def test_post_release_smoke_is_fail_fast(self):
+        verify = (ROOT / "scripts" / "release" / "verify-native.sh").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("bash --noprofile --norc -e -c", verify)
+
 
 if __name__ == "__main__":
     unittest.main()

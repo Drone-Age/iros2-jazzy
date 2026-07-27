@@ -77,7 +77,7 @@ as_root apt-get install -y \
   iros2j-rviz2
 
 env -i HOME="${HOME}" PATH="/usr/bin:/bin" \
-  bash --noprofile --norc -c '
+  bash --noprofile --norc -e -c '
     source /opt/iros2j/setup.bash
     test "${ROS_DISTRO}" = jazzy
     ros2 pkg prefix ros_core

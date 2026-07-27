@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "release": {
+    "name": "iros2j",
+    "package_version": "1.0.2",
+    "debian_version": "1.0.2-1+deb13",
+    "tag": "v2.1.0.2",
+    "process_version": "1.5.12",
+    "status": "draft"
+  },
+  "sources": {
+    "ros_distribution": "jazzy",
+    "lock_file": "manifests/iros2j-jazzy.lock.repos",
+    "lock_sha256": "99a65d1ba35707626bf2a33e6de43e64decba8f5f357bd6671704618b4faff45"
+  },
+  "build": {
+    "operating_system": "debian",
+    "release": "13",
+    "codename": "trixie",
+    "architecture": "arm64",
+    "native": true,
+    "install_prefix": "/opt/iros2j",
+    "build_type": "Release"
+  },
+  "packages": {
+    "namespace": "iros2j",
+    "required_metapackages": [
+      "iros2j-ros-core",
+      "iros2j-ros-base",
+      "iros2j-common-interfaces",
+      "iros2j-vision-opencv",
+      "iros2j-rviz2"
+    ],
+    "inventory_sha256": null
+  },
+  "excluded": [
+    "amd64",
+    "docker",
+    "qemu",
+    "vins-neo-validation",
+    "monolithic-packages"
+  ],
+  "artifacts": {
+    "apt_repository": null,
+    "sha256": null,
+    "sbom": null,
+    "native_gate": null
+  }
+}
