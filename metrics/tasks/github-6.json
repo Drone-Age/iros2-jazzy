@@ -50,6 +50,17 @@
       "evidence": "https://github.com/Drone-Age/iros2_0/commit/2f940b7431fab7e02a37af85963cdfea9cbc04eb",
       "reusable": true,
       "summary": "Implemented iros2j package generation, source lock, APT, SBOM, and gates."
+    },
+    {
+      "stage": "process",
+      "category": "estimation-and-performance",
+      "result": "PASS",
+      "attempt": 1,
+      "duration_minutes": 5,
+      "commit": "b4a22b4e178806045b07336a9006772a2be3b3a9",
+      "evidence": "https://github.com/Drone-Age/iros2_0/tree/process-v1.3.0",
+      "reusable": true,
+      "summary": "Added ClickUp timer/estimate rules, historical metrics, calibration, error records, and completion reports."
     }
   ],
   "errors": [
