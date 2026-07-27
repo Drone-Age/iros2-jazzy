@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
   "id": "github-6",
-  "title": "Complete iros2j 1.0.1 and release v2.1.0.1",
+  "title": "Complete iros2j package split and publish verified ARM64 release",
   "task_type": "release-engineering",
-  "status": "active",
+  "status": "completed",
   "links": {
     "github": "https://github.com/Drone-Age/iros2_0/issues/6",
     "clickup": "https://app.clickup.com/t/9015756655/86cax7m1t"
   },
   "versions": {
-    "product": "1.0.1",
-    "product_tag": "v2.1.0.1",
-    "process": "1.5.9",
-    "process_tag": "process-v1.5.9"
+    "product": "1.0.2",
+    "product_tag": "v2.1.0.2",
+    "process": "1.5.12",
+    "process_tag": "process-v1.5.12"
   },
   "estimates": [
     {
@@ -138,6 +138,28 @@
       "evidence": "No secret keys were returned from either the rpi or root GPG keyring.",
       "reusable": false,
       "summary": "A release signing key must be imported or created before the native pipeline can produce signed APT metadata."
+    },
+    {
+      "stage": "release",
+      "category": "native-arm64-release",
+      "result": "PASS",
+      "attempt": 2,
+      "duration_minutes": 41,
+      "commit": "b802638395478eea14248570670562f4ff49f714",
+      "evidence": "iros2j-b80263839547; ClickUp comment 90150245379466",
+      "reusable": true,
+      "summary": "Built and audited 244 bytecode-free Debian 13 ARM64 packages, signed APT, SBOM, clean installation, and fail-fast ROS/RViz smoke."
+    },
+    {
+      "stage": "release",
+      "category": "post-release-verification",
+      "result": "PASS",
+      "attempt": 2,
+      "duration_minutes": 1,
+      "commit": "16472c893f17d4be88682e9b1139df2e7decb2ba",
+      "evidence": "https://github.com/Drone-Age/iros2_0/releases/tag/v2.1.0.2",
+      "reusable": true,
+      "summary": "Downloaded published assets on Debian 13 ARM64, verified checksum, installed 1.0.2, and passed fail-fast ros2/RViz smoke."
     }
   ],
   "errors": [
@@ -318,21 +340,63 @@
       "tracked_minutes_lost": null,
       "machine_minutes_lost": 0,
       "invalidated_evidence": []
+    },
+    {
+      "stage": "release-native-gate",
+      "category": "cross-platform-line-endings",
+      "symptom": "Windows verification rejected a valid Linux native gate manifest hash.",
+      "root_cause": "The gate hashed raw CRLF/LF bytes for a Git-tracked JSON manifest.",
+      "correction": "Normalize UTF-8 text to LF before hashing on creation and verification.",
+      "prevention": "Regression-test the cross-platform manifest hash contract.",
+      "tracked_minutes_lost": 3,
+      "machine_minutes_lost": 0,
+      "invalidated_evidence": []
+    },
+    {
+      "stage": "release-publication",
+      "category": "powershell-expected-nonzero",
+      "symptom": "Publication stopped when the GitHub CLI correctly reported that the release did not yet exist.",
+      "root_cause": "Strict PowerShell error handling converted the expected preflight nonzero result into a terminating error.",
+      "correction": "Capture expected release/tag absence under a temporary non-terminating policy and restore strict handling immediately.",
+      "prevention": "Regression-test publication preflight when both release and tag are absent.",
+      "tracked_minutes_lost": 2,
+      "machine_minutes_lost": 0,
+      "invalidated_evidence": []
+    },
+    {
+      "stage": "post-release-verification",
+      "category": "python-bytecode-and-false-pass",
+      "symptom": "Published 1.0.1 packages installed, but ros2 failed with bad marshal data while the smoke verifier returned success.",
+      "root_cause": "Debian packages contained build-host Python bytecode, and the nested smoke shell did not enable errexit so a later successful RViz command masked ros2 failures.",
+      "correction": "Published corrective 1.0.2 packages without pyc/pyo and made every nested smoke command fail-fast.",
+      "prevention": "Reject bytecode in all package archives, run smoke with bash -e, and require post-release download/install verification before completion.",
+      "tracked_minutes_lost": 45,
+      "machine_minutes_lost": 41,
+      "invalidated_evidence": [
+        "v2.1.0.1 post-release verification result"
+      ]
     }
   ],
   "actual": {
-    "clickup_tracked_minutes": null,
-    "calendar_minutes": null,
-    "machine_minutes": null,
-    "external_wait_minutes": null,
+    "clickup_tracked_minutes": 228.6,
+    "calendar_minutes": 265.4,
+    "machine_minutes": 142,
+    "external_wait_minutes": 0,
     "started_at": "2026-07-27T09:59:54Z",
-    "completed_at": null
+    "completed_at": "2026-07-27T14:25:16Z"
   },
-  "deliverables": [],
-  "escaped_defects": null,
+  "deliverables": [
+    "https://github.com/Drone-Age/iros2_0/releases/tag/v2.1.0.2",
+    "244 separate iros2j 1.0.2 Debian packages for Debian 13 ARM64",
+    "Signed APT snapshot, SHA-256, SPDX SBOM, package inventory, and native gate",
+    "process-v1.5.12 release and task-management safeguards"
+  ],
+  "escaped_defects": 1,
   "reusable_improvements": [
     "Cross-session task startup protocol",
-    "Exact source and evidence-bound release workflow"
+    "Exact source and evidence-bound release workflow",
+    "Bytecode-free package policy and fail-fast post-release verification",
+    "Terminal ClickUp status read-before/write/read-after gate"
   ],
-  "completion_report": null
+  "completion_report": "reports/tasks/github-6.md"
 }
