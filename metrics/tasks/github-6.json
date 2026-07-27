@@ -11,8 +11,8 @@
   "versions": {
     "product": "1.0.1",
     "product_tag": "v2.1.0.1",
-    "process": "1.5.2",
-    "process_tag": "process-v1.5.2"
+    "process": "1.5.3",
+    "process_tag": "process-v1.5.3"
   },
   "estimates": [
     {
@@ -205,6 +205,17 @@
       "root_cause": "Windows OpenSSH command-line argument transport did not preserve the intended multi-line shell command and working-directory context.",
       "correction": "Stream native start and polling scripts through SSH stdin to bash -s.",
       "prevention": "Regression-test stdin transport for both dispatcher start and state polling.",
+      "tracked_minutes_lost": null,
+      "machine_minutes_lost": 0,
+      "invalidated_evidence": []
+    },
+    {
+      "stage": "native-dispatch",
+      "category": "powershell-bash-encoding-and-expansion",
+      "symptom": "Remote start stopped before creating a build process with true carriage-return and rc unbound-variable errors.",
+      "root_cause": "Windows PowerShell emitted CRLF over stdin and the nested double-quoted sh -c command expanded rc in the outer set -u shell.",
+      "correction": "Strip carriage returns before bash -s and use a background subshell with local exit-code capture.",
+      "prevention": "Regression-test CRLF normalization and prohibit nested nohup sh -c in the dispatcher.",
       "tracked_minutes_lost": null,
       "machine_minutes_lost": 0,
       "invalidated_evidence": []

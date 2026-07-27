@@ -54,10 +54,17 @@ fi
 if [ -f '$remoteRoot/pid' ] && kill -0 `$(cat '$remoteRoot/pid') 2>/dev/null; then
   exit 0
 fi
-nohup sh -c "cd '$remoteRoot/repo' && env IROS2_INSTALL_DEPENDENCIES=1 $gpgEnvironment bash scripts/native/release-rpi.sh; rc=`$?; echo `$rc > '$remoteRoot/exit-code'; exit `$rc" > '$remoteRoot/run.log' 2>&1 < /dev/null &
+(
+  set +e
+  cd '$remoteRoot/repo'
+  env IROS2_INSTALL_DEPENDENCIES=1 $gpgEnvironment bash scripts/native/release-rpi.sh
+  rc=`$?
+  echo "`$rc" > '$remoteRoot/exit-code'
+  exit "`$rc"
+) > '$remoteRoot/run.log' 2>&1 < /dev/null &
 echo `$! > '$remoteRoot/pid'
 "@
-$start | & ssh @sshOptions $HostName "bash -s"
+$start | & ssh @sshOptions $HostName "tr -d '\r' | bash -s"
 if ($LASTEXITCODE -ne 0) {
     throw "Failed to start or resume native release run."
 }
@@ -74,7 +81,7 @@ else
 fi
 tail -n 5 '$remoteRoot/run.log' 2>/dev/null || true
 "@
-    $state = $stateScript | & ssh @sshOptions $HostName "bash -s"
+    $state = $stateScript | & ssh @sshOptions $HostName "tr -d '\r' | bash -s"
     $state | Write-Host
     if ($state[0] -like "complete *") {
         $exitCode = [int]($state[0] -split " ")[1]

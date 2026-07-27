@@ -41,11 +41,16 @@ class RepositoryPolicyTests(unittest.TestCase):
         dispatcher = (ROOT / "scripts" / "invoke-native-release.ps1").read_text(
             encoding="utf-8"
         )
-        self.assertIn('$start | & ssh @sshOptions $HostName "bash -s"', dispatcher)
         self.assertIn(
-            '$state = $stateScript | & ssh @sshOptions $HostName "bash -s"',
+            """$start | & ssh @sshOptions $HostName "tr -d '\\r' | bash -s\"""",
             dispatcher,
         )
+        self.assertIn(
+            """$state = $stateScript | & ssh @sshOptions $HostName "tr -d '\\r' | bash -s\"""",
+            dispatcher,
+        )
+        self.assertNotIn('nohup sh -c', dispatcher)
+        self.assertIn('rc=`$?', dispatcher)
 
 
 if __name__ == "__main__":

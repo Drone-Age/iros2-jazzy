@@ -1,5 +1,11 @@
 # Changelog
 
+## Process 1.5.3
+
+- Normalized Windows PowerShell CRLF input before remote Bash execution.
+- Replaced the nested native-run command string with a background subshell
+  that safely records the release exit code.
+
 ## Process 1.5.2
 
 - Fixed Windows OpenSSH native dispatch by streaming multi-line remote scripts
