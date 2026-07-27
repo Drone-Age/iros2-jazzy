@@ -7,7 +7,7 @@
 
 ```text
 Package: iros2-0
-Architecture: arm64
+Architecture: amd64 або arm64
 Install prefix: /opt/iros2_0/jazzy
 ```
 
@@ -47,4 +47,4 @@ scan. Поточний `control.in` є bootstrap-варіантом і не го
 [регламенті перевірки релізу](RELEASE_VERIFICATION_UK.md).
 
 Версія `0.1.0` призначена для виявлення сумісності Jazzy з Debian 13 Trixie
-ARM64 і не є production release.
+AMD64 та ARM64 і не є production release.

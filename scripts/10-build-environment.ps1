@@ -1,9 +1,13 @@
-$ErrorActionPreference = "Stop"
+param(
+    [ValidateSet("amd64", "arm64")]
+    [string]$Architecture = "amd64"
+)
 
+$ErrorActionPreference = "Stop"
 docker buildx build `
-    --platform linux/arm64 `
+    --platform "linux/$Architecture" `
     --target environment `
-    --tag iros2-0:build-environment `
+    --tag "iros2-0:build-environment-$Architecture" `
     --load `
     .
 

@@ -7,15 +7,15 @@ param(
 $ErrorActionPreference = "Stop"
 $tag = "v$Version"
 $packageVersion = "$Version-1+deb13"
-$versionedAsset = "iros2-0_${packageVersion}_arm64.deb"
-$stableAsset = "iros2-0_latest_arm64.deb"
-$stableChecksum = "${stableAsset}.sha256"
-$assetNames = @(
-    $versionedAsset,
-    $stableAsset,
-    $stableChecksum,
-    "SHA256SUMS"
-)
+# Release order is fixed: publish AMD64 first, then ARM64.
+$architectures = @("amd64", "arm64")
+$assetNames = @()
+foreach ($architecture in $architectures) {
+    $assetNames += "iros2-0_${packageVersion}_${architecture}.deb"
+    $assetNames += "iros2-0_latest_${architecture}.deb"
+    $assetNames += "iros2-0_latest_${architecture}.deb.sha256"
+}
+$assetNames += "SHA256SUMS"
 
 $assetPaths = foreach ($name in $assetNames) {
     $path = Join-Path $ArtifactsDirectory $name
@@ -25,17 +25,22 @@ $assetPaths = foreach ($name in $assetNames) {
     (Resolve-Path -LiteralPath $path).Path
 }
 
-$expectedHash = (
-    Get-Content -LiteralPath (Join-Path $ArtifactsDirectory $stableChecksum) -Raw
-).Split(" ", [System.StringSplitOptions]::RemoveEmptyEntries)[0]
-$actualHash = (
-    Get-FileHash -Algorithm SHA256 -LiteralPath (
-        Join-Path $ArtifactsDirectory $stableAsset
-    )
-).Hash.ToLowerInvariant()
+foreach ($architecture in $architectures) {
+    Write-Host "Validating release architecture: $architecture"
+    $stableAsset = "iros2-0_latest_${architecture}.deb"
+    $stableChecksum = "${stableAsset}.sha256"
+    $expectedHash = (
+        Get-Content -LiteralPath (Join-Path $ArtifactsDirectory $stableChecksum) -Raw
+    ).Split(" ", [System.StringSplitOptions]::RemoveEmptyEntries)[0]
+    $actualHash = (
+        Get-FileHash -Algorithm SHA256 -LiteralPath (
+            Join-Path $ArtifactsDirectory $stableAsset
+        )
+    ).Hash.ToLowerInvariant()
 
-if ($actualHash -ne $expectedHash.ToLowerInvariant()) {
-    throw "Stable asset checksum mismatch."
+    if ($actualHash -ne $expectedHash.ToLowerInvariant()) {
+        throw "$architecture stable asset checksum mismatch."
+    }
 }
 
 $ghCandidates = @(
@@ -67,10 +72,12 @@ if ($releaseViewExitCode -eq 0) {
 $notes = @"
 ## IROS2_0 $tag
 
-Native Debian 13 ARM64 release for Raspberry Pi 5.
+Debian 13 release built and published in this order:
+1. AMD64 systems.
+2. ARM64 devices such as Raspberry Pi 5.
 
-Assets include the versioned Debian package, a stable latest-download alias,
-and SHA-256 checksums.
+Assets include versioned Debian packages for both architectures, stable
+latest-download aliases, and SHA-256 checksums.
 "@
 
 & $gh release create $tag @assetPaths `

@@ -9,8 +9,16 @@ package_version="${IROS2_VERSION:?IROS2_VERSION is required}-1+deb13"
 package_root="$(mktemp -d "/tmp/iros2-0_${package_version}_${package_arch}.XXXXXX")"
 trap 'rm -rf -- "${package_root}"' EXIT
 
-if [[ "${package_arch}" != "arm64" ]]; then
-  echo "IROS2_0 package must be built on/for arm64, got: ${package_arch}" >&2
+case "${package_arch}" in
+  amd64|arm64) ;;
+  *)
+    echo "Unsupported IROS2_0 package architecture: ${package_arch}" >&2
+    exit 1
+    ;;
+esac
+native_arch="$(dpkg --print-architecture)"
+if [[ "${package_arch}" != "${native_arch}" ]]; then
+  echo "Package architecture ${package_arch} does not match build architecture ${native_arch}." >&2
   exit 1
 fi
 test -f "${install_prefix}/setup.bash"
@@ -61,6 +69,7 @@ sed \
   -e "s/@BUILD_DATE@/${BUILD_DATE}/g" \
   -e "s/@VCS_REF@/${VCS_REF}/g" \
   -e "s/@DEPENDS@/${runtime_depends}/g" \
+  -e "s/@ARCH@/${package_arch}/g" \
   "${packaging_dir}/control.in" > "${package_root}/DEBIAN/control"
 
 installed_size="$(du -sk "${package_root}" | cut -f1)"
@@ -70,6 +79,9 @@ printf 'Installed-Size: %s\n' "${installed_size}" \
 dpkg-deb --build --root-owner-group \
   "${package_root}" \
   "${output_dir}/iros2-0_${package_version}_${package_arch}.deb"
+cp -f -- \
+  "${output_dir}/iros2-0_${package_version}_${package_arch}.deb" \
+  /tmp/iros2-0-runtime.deb
 
 cd "${output_dir}"
 stable_asset="iros2-0_latest_${package_arch}.deb"

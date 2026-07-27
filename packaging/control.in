@@ -2,12 +2,12 @@ Package: iros2-0
 Version: @VERSION@
 Section: robotics
 Priority: optional
-Architecture: arm64
+Architecture: @ARCH@
 Maintainer: Drone Age
 Depends: @DEPENDS@
 Conflicts: ros-jazzy-ros-base
 Provides: iros2-0-runtime
-Description: INDRA build of ROS 2 Jazzy for Debian 13 ARM64
- Reproducible ROS 2 Jazzy runtime built for Raspberry Pi 5.
+Description: INDRA build of ROS 2 Jazzy for Debian 13
+ Reproducible ROS 2 Jazzy runtime for Debian 13 on @ARCH@.
  Build-Date: @BUILD_DATE@
  VCS-Ref: @VCS_REF@

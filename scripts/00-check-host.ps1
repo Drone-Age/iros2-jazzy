@@ -15,8 +15,11 @@ if ($LASTEXITCODE -ne 0) {
     throw "Unable to inspect the active Buildx builder."
 }
 
-if (($builder -join "`n") -notmatch "linux/arm64") {
-    throw "The active Buildx builder does not advertise linux/arm64."
+$platforms = $builder -join "`n"
+foreach ($platform in @("linux/amd64", "linux/arm64")) {
+    if ($platforms -notmatch [regex]::Escape($platform)) {
+        throw "The active Buildx builder does not advertise $platform."
+    }
 }
 
-Write-Host "Host check passed: linux/arm64 builds are available."
+Write-Host "Host check passed: linux/amd64 and linux/arm64 builds are available."

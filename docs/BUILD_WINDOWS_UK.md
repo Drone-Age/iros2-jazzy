@@ -11,8 +11,8 @@
 - рекомендовано 16 ГБ RAM або більше;
 - стабільне підключення до Інтернету.
 
-Перша ARM64-збірка на x86-64 виконується через емуляцію і може тривати кілька
-годин.
+AMD64 збирається першою та нативно для Windows x64 host. Після неї ARM64-збірка
+виконується через емуляцію і може тривати кілька годин.
 
 ## 2. Отримання репозиторію
 
@@ -37,7 +37,7 @@ docker buildx version
 docker buildx inspect --bootstrap
 ```
 
-У platforms має бути `linux/arm64`.
+У platforms мають бути `linux/amd64` та `linux/arm64`.
 
 Еквівалент:
 
@@ -49,7 +49,7 @@ docker buildx inspect --bootstrap
 
 ```powershell
 docker buildx build `
-  --platform linux/arm64 `
+  --platform linux/amd64 `
   --target environment `
   --tag iros2-0:build-environment `
   --load `
@@ -75,7 +75,7 @@ https://raw.githubusercontent.com/ros2/ros2/jazzy/ros2.repos
 
 ```powershell
 docker buildx build `
-  --platform linux/arm64 `
+  --platform linux/amd64 `
   --target source `
   --progress plain `
   .
@@ -88,7 +88,7 @@ docker buildx build `
 
 ```powershell
 docker buildx build `
-  --platform linux/arm64 `
+  --platform linux/amd64 `
   --target dependencies `
   --progress plain `
   .
@@ -102,7 +102,7 @@ Debian не можна.
 
 ```powershell
 docker buildx build `
-  --platform linux/arm64 `
+  --platform linux/amd64 `
   --target build `
   --progress plain `
   .
@@ -120,7 +120,7 @@ $BuildDate = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
 $VcsRef = (git rev-parse HEAD).Trim()
 
 docker buildx build `
-  --platform linux/arm64 `
+  --platform linux/amd64 `
   --target artifact `
   --build-arg "IROS2_VERSION=$Version" `
   --build-arg "BUILD_DATE=$BuildDate" `
@@ -140,9 +140,15 @@ docker buildx build `
 
 ```text
 artifacts/
+├── iros2-0_0.1.0-1+deb13_amd64.deb
+├── iros2-0_latest_amd64.deb
 ├── iros2-0_0.1.0-1+deb13_arm64.deb
+├── iros2-0_latest_arm64.deb
 └── SHA256SUMS
 ```
+
+Скрипт завжди створює release-артефакти у фіксованому порядку: спочатку AMD64,
+потім ARM64.
 
 ## 9. Перевірка
 

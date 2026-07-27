@@ -72,18 +72,21 @@ RUN if [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then \
 
 FROM dependencies AS build
 
+ARG TARGETARCH
 COPY scripts/container/build-ros.sh /usr/local/lib/iros2_0/
 RUN chmod +x /usr/local/lib/iros2_0/build-ros.sh
-RUN --mount=type=cache,id=iros2_0-jazzy-arm64-build,target=/work/build,sharing=locked \
-    --mount=type=cache,id=iros2_0-jazzy-arm64-log,target=/work/log,sharing=locked \
+RUN --mount=type=cache,id=iros2_0-jazzy-${TARGETARCH}-build,target=/work/build,sharing=locked \
+    --mount=type=cache,id=iros2_0-jazzy-${TARGETARCH}-log,target=/work/log,sharing=locked \
     /usr/local/lib/iros2_0/build-ros.sh
 
 FROM build AS package
 
+ARG TARGETARCH
 ARG IROS2_VERSION=0.1.0
 ARG BUILD_DATE=unknown
 ARG VCS_REF=unknown
-ENV IROS2_VERSION=${IROS2_VERSION} \
+ENV IROS2_ARCH=${TARGETARCH} \
+    IROS2_VERSION=${IROS2_VERSION} \
     BUILD_DATE=${BUILD_DATE} \
     VCS_REF=${VCS_REF}
 
@@ -98,10 +101,10 @@ COPY --from=package /out/ /
 
 FROM debian:trixie-slim AS runtime
 
-COPY --from=package /out/iros2-0_*.deb /tmp/
+COPY --from=package /tmp/iros2-0-runtime.deb /tmp/iros2-0.deb
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends /tmp/iros2-0_*.deb \
-    && rm -f /tmp/iros2-0_*.deb \
+    && apt-get install -y --no-install-recommends /tmp/iros2-0.deb \
+    && rm -f /tmp/iros2-0.deb \
     && rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT ["/usr/lib/iros2-0/docker-entrypoint.sh"]

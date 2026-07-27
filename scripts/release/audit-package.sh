@@ -83,7 +83,7 @@ while IFS= read -r library; do
   owner="$(dpkg-query -S "${real_library}" 2>/dev/null | head -n 1 || true)"
   [[ -n "${owner}" ]] || continue
   owner="${owner%%: /*}"
-  owner="${owner%:arm64}"
+  owner="${owner%:*}"
   printf '%s\n' "${owner}"
 done < <(grep '^/' "${dependency_paths}" | sort -u) | sort -u
 

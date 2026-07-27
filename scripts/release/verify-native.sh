@@ -10,7 +10,16 @@ if [[ "${verify_installed_only}" != "1" && -z "${tag}" ]]; then
 fi
 version="${IROS2_PACKAGE_VERSION:-${tag#v}-1+deb13}"
 allow_remove_prefix="${IROS2_ALLOW_REMOVE_PREFIX:-0}"
-asset="iros2-0_${version}_arm64.deb"
+architecture="$(dpkg --print-architecture)"
+case "${architecture}" in
+  amd64) expected_machine="x86_64" ;;
+  arm64) expected_machine="aarch64" ;;
+  *)
+    echo "Unsupported verification architecture: ${architecture}" >&2
+    exit 1
+    ;;
+esac
+asset="iros2-0_${version}_${architecture}.deb"
 release_url="https://github.com/${repo}/releases/download/${tag}"
 work_dir="$(mktemp -d)"
 trap 'rm -rf -- "${work_dir}"' EXIT
@@ -39,7 +48,7 @@ clean_shell() {
     bash --noprofile --norc -c "$1"
 }
 
-[[ "$(uname -m)" == "aarch64" ]]
+[[ "$(uname -m)" == "${expected_machine}" ]]
 source /etc/os-release
 [[ "${ID}" == "debian" && "${VERSION_CODENAME}" == "trixie" ]]
 

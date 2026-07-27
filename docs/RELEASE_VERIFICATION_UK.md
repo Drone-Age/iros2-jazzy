@@ -63,11 +63,17 @@ IROS2_RESUME_BUILD=0 IROS2_CMAKE_CLEAN_CACHE=1 \
 Для GitHub Release створюються versioned-файл і стабільний asset:
 
 ```text
+iros2-0_<version>_amd64.deb
+iros2-0_latest_amd64.deb
+iros2-0_latest_amd64.deb.sha256
 iros2-0_<version>_arm64.deb
 iros2-0_latest_arm64.deb
 iros2-0_latest_arm64.deb.sha256
 SHA256SUMS
 ```
+
+Порядок release є обов'язковим: спочатку збирається, перевіряється і додається
+AMD64, після цього — ARM64.
 
 Після merge змін у `main` реліз публікується однією командою на Windows:
 

@@ -1,13 +1,13 @@
 # IROS2_0
 
-IROS2_0 — готовий пакет ROS 2 Jazzy для Raspberry Pi 5 з Debian 13
-Trixie ARM64. Після встановлення команди `ros2` і `rviz2` доступні у
+IROS2_0 — готовий пакет ROS 2 Jazzy для Debian 13 Trixie на AMD64 та для
+Raspberry Pi 5 на ARM64. Після встановлення команди `ros2` і `rviz2` доступні у
 звичайному терміналі без ручного налаштування середовища.
 
 ## Системні вимоги
 
-- Raspberry Pi 5;
-- Debian 13 Trixie ARM64;
+- AMD64-комп'ютер або Raspberry Pi 5;
+- Debian 13 Trixie AMD64 або ARM64;
 - доступ до інтернету;
 - команди `curl`, `sudo` та `apt`.
 
@@ -19,7 +19,7 @@ uname -m
 printf '%s %s\n' "$ID" "$VERSION_CODENAME"
 ```
 
-Очікуваний результат: архітектура `aarch64` та система `debian trixie`.
+Очікуваний результат: архітектура `x86_64` або `aarch64` та система `debian trixie`.
 
 ## Швидке встановлення останнього релізу
 
@@ -29,13 +29,14 @@ printf '%s %s\n' "$ID" "$VERSION_CODENAME"
 mkdir -p /tmp/iros2-install
 cd /tmp/iros2-install
 
-curl -fLO "https://github.com/Drone-Age/iros2_0/releases/latest/download/iros2-0_latest_arm64.deb"
-curl -fLO "https://github.com/Drone-Age/iros2_0/releases/latest/download/iros2-0_latest_arm64.deb.sha256"
+arch="$(dpkg --print-architecture)"
+curl -fLO "https://github.com/Drone-Age/iros2_0/releases/latest/download/iros2-0_latest_${arch}.deb"
+curl -fLO "https://github.com/Drone-Age/iros2_0/releases/latest/download/iros2-0_latest_${arch}.deb.sha256"
 
-sha256sum -c iros2-0_latest_arm64.deb.sha256
+sha256sum -c "iros2-0_latest_${arch}.deb.sha256"
 
 sudo apt update
-sudo apt install ./iros2-0_latest_arm64.deb
+sudo apt install "./iros2-0_latest_${arch}.deb"
 ```
 
 Під час встановлення APT автоматично додасть необхідні системні залежності.
