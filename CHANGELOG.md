@@ -8,6 +8,8 @@
   exact `iros2j-fastcdr` and `iros2j-fastrtps` snapshot dependencies.
 - Added a clean downstream Fast DDS CMake consumer build to native and
   post-release verification.
+- Allowed the native dispatcher to gate an exact commit already pushed to a
+  feature branch, while continuing to reject unpublished local commits.
 - Started immutable corrective package release 1.0.3 without modifying 1.0.2.
 
 ## Process 1.5.12

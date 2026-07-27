@@ -53,6 +53,11 @@ class RepositoryPolicyTests(unittest.TestCase):
         self.assertIn('rc=`$?', dispatcher)
         self.assertIn('remote_root_abs=`$(cd', dispatcher)
         self.assertIn('> "`$remote_root_abs/exit-code"', dispatcher)
+        self.assertIn("git branch -r --contains $commit", dispatcher)
+        self.assertIn(
+            "Release commit must be reachable from a pushed origin branch.",
+            dispatcher,
+        )
 
     def test_rosdep_results_are_split_into_individual_debian_packages(self):
         builder = (ROOT / "scripts" / "native" / "build-debs.sh").read_text(

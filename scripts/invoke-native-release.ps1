@@ -15,9 +15,11 @@ $commit = (git rev-parse "$GitRef^{commit}").Trim()
 if ($LASTEXITCODE -ne 0 -or $commit -notmatch "^[0-9a-f]{40}$") {
     throw "GitRef does not resolve to a commit."
 }
-git merge-base --is-ancestor $commit origin/main
-if ($LASTEXITCODE -ne 0) {
-    throw "Release commit must be reachable from origin/main."
+$publishedBranches = @(git branch -r --contains $commit --format="%(refname:short)")
+if ($LASTEXITCODE -ne 0 -or -not ($publishedBranches | Where-Object {
+    $_ -like "origin/*" -and $_ -notlike "origin/HEAD"
+})) {
+    throw "Release commit must be reachable from a pushed origin branch."
 }
 if ($HostName -notmatch '^[A-Za-z0-9._@:-]+$') {
     throw "HostName contains unsupported characters."
