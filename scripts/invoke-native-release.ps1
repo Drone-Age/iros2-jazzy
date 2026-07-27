@@ -57,14 +57,14 @@ fi
 nohup sh -c "cd '$remoteRoot/repo' && env IROS2_INSTALL_DEPENDENCIES=1 $gpgEnvironment bash scripts/native/release-rpi.sh; rc=`$?; echo `$rc > '$remoteRoot/exit-code'; exit `$rc" > '$remoteRoot/run.log' 2>&1 < /dev/null &
 echo `$! > '$remoteRoot/pid'
 "@
-& ssh @sshOptions $HostName $start
+$start | & ssh @sshOptions $HostName "bash -s"
 if ($LASTEXITCODE -ne 0) {
     throw "Failed to start or resume native release run."
 }
 
 Write-Host "Native run ID: $runId"
 while ($true) {
-    $state = & ssh @sshOptions $HostName @"
+    $stateScript = @"
 if [ -f '$remoteRoot/exit-code' ]; then
   printf 'complete %s\n' "`$(cat '$remoteRoot/exit-code')"
 elif [ -f '$remoteRoot/pid' ] && kill -0 `$(cat '$remoteRoot/pid') 2>/dev/null; then
@@ -74,6 +74,7 @@ else
 fi
 tail -n 5 '$remoteRoot/run.log' 2>/dev/null || true
 "@
+    $state = $stateScript | & ssh @sshOptions $HostName "bash -s"
     $state | Write-Host
     if ($state[0] -like "complete *") {
         $exitCode = [int]($state[0] -split " ")[1]

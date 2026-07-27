@@ -1,5 +1,11 @@
 # Changelog
 
+## Process 1.5.2
+
+- Fixed Windows OpenSSH native dispatch by streaming multi-line remote scripts
+  to `bash -s` instead of passing them as a command-line argument.
+- Added regression coverage for native start and status polling transport.
+
 ## Process 1.5.1
 
 - Corrected ClickUp comment verification: draft text is not evidence of

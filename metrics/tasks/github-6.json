@@ -11,8 +11,8 @@
   "versions": {
     "product": "1.0.1",
     "product_tag": "v2.1.0.1",
-    "process": "1.5.1",
-    "process_tag": "process-v1.5.1"
+    "process": "1.5.2",
+    "process_tag": "process-v1.5.2"
   },
   "estimates": [
     {
@@ -194,6 +194,17 @@
       "root_cause": "The builder uses the dedicated local key id_ed25519_rpi106, which was not selected by the default SSH attempt.",
       "correction": "Selected C:/Users/kkova/.ssh/id_ed25519_rpi106 and verified builder access.",
       "prevention": "Record and reuse the dedicated key path for rpi@192.168.144.106 in release checkpoints.",
+      "tracked_minutes_lost": null,
+      "machine_minutes_lost": 0,
+      "invalidated_evidence": []
+    },
+    {
+      "stage": "native-dispatch",
+      "category": "remote-command-transport",
+      "symptom": "The builder repository was cloned correctly, but release-rpi.sh was resolved from the SSH login directory and the pipeline did not create a pid or exit record.",
+      "root_cause": "Windows OpenSSH command-line argument transport did not preserve the intended multi-line shell command and working-directory context.",
+      "correction": "Stream native start and polling scripts through SSH stdin to bash -s.",
+      "prevention": "Regression-test stdin transport for both dispatcher start and state polling.",
       "tracked_minutes_lost": null,
       "machine_minutes_lost": 0,
       "invalidated_evidence": []

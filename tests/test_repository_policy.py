@@ -37,6 +37,16 @@ class RepositoryPolicyTests(unittest.TestCase):
         self.assertEqual(manifest["release"]["process_version"], process)
         self.assertEqual(manifest["release"]["tag"], f"v2.{version}")
 
+    def test_native_dispatcher_streams_remote_scripts_over_stdin(self):
+        dispatcher = (ROOT / "scripts" / "invoke-native-release.ps1").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn('$start | & ssh @sshOptions $HostName "bash -s"', dispatcher)
+        self.assertIn(
+            '$state = $stateScript | & ssh @sshOptions $HostName "bash -s"',
+            dispatcher,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
