@@ -1,0 +1,68 @@
+name: Release
+description: Track a gated native iros2j release
+title: "Release v"
+labels: ["release"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Complete every required field. Do not create the product tag until all
+        metadata and native Debian 13 ARM64 gates pass for the same commit.
+  - type: input
+    id: version
+    attributes:
+      label: Product version
+      description: Package version without the ROS-generation tag prefix.
+      placeholder: 1.0.0
+    validations:
+      required: true
+  - type: input
+    id: tag
+    attributes:
+      label: Proposed immutable tag
+      placeholder: v2.1.0.0
+    validations:
+      required: true
+  - type: input
+    id: process_version
+    attributes:
+      label: Release process version
+      placeholder: 1.0.0
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and risks
+    validations:
+      required: true
+  - type: textarea
+    id: snapshot
+    attributes:
+      label: Pinned snapshot
+      description: Source commit, manifest path/hash, package set, and builder identity.
+    validations:
+      required: true
+  - type: checkboxes
+    id: gates
+    attributes:
+      label: Mandatory gates
+      options:
+        - label: Staged-index and committed-snapshot metadata validation pass.
+          required: true
+        - label: Native Debian 13 Trixie ARM64 build and package tests pass.
+          required: true
+        - label: APT repository, clean install, ROS smoke, checksums, and SBOM pass.
+          required: true
+        - label: Evidence is bound to the exact commit, manifest, and artifact hashes.
+          required: true
+        - label: No product tag existed before all gates passed.
+          required: true
+        - label: Clean-host post-release verification is recorded.
+          required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and post-release result
+    validations:
+      required: true
