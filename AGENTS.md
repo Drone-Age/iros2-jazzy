@@ -7,6 +7,9 @@
 - Before starting or resuming implementation work, read
   `docs/TASK_MANAGEMENT.md` and identify the linked GitHub Issue and ClickUp
   task. If either link is missing, establish it before reporting progress.
+- Read `docs/ESTIMATION_AND_PERFORMANCE.md`. Before task work, ensure the
+  ClickUp task has an initial estimate and start its time tracker. Stop the
+  tracker when work pauses, waits for external input, or the session ends.
 - English normative documents are the canonical source for machine-facing
   interpretation. Ukrainian `.uk.md` files are mandatory human-facing
   counterparts.
@@ -40,3 +43,5 @@ publication scripts, issue forms, or automation must follow
   ownership, priorities, blockers, and cross-component visibility.
 - Update both linked work items at every material checkpoint according to
   `docs/TASK_MANAGEMENT.md`.
+- Maintain the repository task record, operation/error log, and completion
+  report according to `docs/ESTIMATION_AND_PERFORMANCE.md`.

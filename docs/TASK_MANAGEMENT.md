@@ -3,6 +3,9 @@
 This policy is normative for implementation, process, documentation, and
 release work in this repository.
 
+Time estimates, ClickUp timer use, historical metrics, and completion reports
+are governed by `ESTIMATION_AND_PERFORMANCE.md`.
+
 ## 1. Work-item requirement
 
 Material work must have:
@@ -85,6 +88,9 @@ Update both systems after each material checkpoint:
 - manifest finalization;
 - tag or release publication;
 - post-release verification.
+
+Start the ClickUp timer before active checkpoint work and stop it whenever
+active work pauses. A chat session is not a time record.
 
 Each checkpoint update includes:
 

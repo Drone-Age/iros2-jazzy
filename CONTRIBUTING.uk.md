@@ -19,3 +19,5 @@ issue forms, валідаторів, скриптів публікації аб�
 `docs/RELEASE_PROCESS.md`. Кожне implementation-завдання також має
 дотримуватися пов'язаного GitHub/ClickUp workflow з
 `docs/TASK_MANAGEMENT.md`.
+Оцінка, time tracking, записи operations/errors та task completion reports
+мають відповідати `docs/ESTIMATION_AND_PERFORMANCE.md`.

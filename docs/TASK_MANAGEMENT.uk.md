@@ -3,6 +3,9 @@
 Ця політика є нормативною для implementation, process, documentation і
 release-робіт у цьому репозиторії.
 
+Time estimates, використання ClickUp timer, historical metrics і completion
+reports регулюються `ESTIMATION_AND_PERFORMANCE.md`.
+
 ## 1. Обов'язкові work items
 
 Суттєва робота повинна мати:
@@ -85,6 +88,9 @@ checkpoint і безпечну resume command.
 - фіналізації manifest;
 - публікації tag або release;
 - post-release verification.
+
+Запустіть ClickUp timer перед активною роботою над checkpoint і зупиніть його,
+коли активна робота призупиняється. Chat session не є time record.
 
 Кожне checkpoint update містить:
 

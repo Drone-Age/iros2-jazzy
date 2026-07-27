@@ -10,6 +10,7 @@ NORMATIVE = [
     "docs/PACKAGE_POLICY.md",
     "docs/RELEASE_PROCESS.md",
     "docs/TASK_MANAGEMENT.md",
+    "docs/ESTIMATION_AND_PERFORMANCE.md",
     "docs/V1_MIGRATION_PLAN.md",
 ]
 
@@ -64,6 +65,7 @@ class DocumentationTests(unittest.TestCase):
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
         policy = (ROOT / "docs" / "TASK_MANAGEMENT.md").read_text(encoding="utf-8")
         self.assertIn("docs/TASK_MANAGEMENT.md", agents)
+        self.assertIn("docs/ESTIMATION_AND_PERFORMANCE.md", agents)
         for required in (
             "one open GitHub Issue",
             "one ClickUp task",

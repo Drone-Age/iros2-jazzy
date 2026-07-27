@@ -16,6 +16,8 @@ release-процесу. Англійська версія є канонічно�
   [українською](RELEASE_PROCESS.uk.md)
 - [Керування задачами та продовження між сесіями](TASK_MANAGEMENT.md) /
   [українською](TASK_MANAGEMENT.uk.md)
+- [Оцінка, облік часу та продуктивність](ESTIMATION_AND_PERFORMANCE.md) /
+  [українською](ESTIMATION_AND_PERFORMANCE.uk.md)
 - [План переходу v1](V1_MIGRATION_PLAN.md) /
   [українською](V1_MIGRATION_PLAN.uk.md)
 

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Repository task history record",
+  "type": "object",
+  "required": [
+    "schema_version", "id", "title", "task_type", "status", "links",
+    "versions", "estimates", "operations", "errors", "actual",
+    "deliverables", "reusable_improvements", "completion_report"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^github-[0-9]+$"},
+    "title": {"type": "string", "minLength": 1},
+    "task_type": {"type": "string"},
+    "status": {"enum": ["planned", "active", "blocked", "completed", "cancelled"]},
+    "links": {
+      "type": "object",
+      "required": ["github", "clickup"],
+      "properties": {
+        "github": {"type": "string", "format": "uri"},
+        "clickup": {"type": "string", "format": "uri"}
+      }
+    },
+    "estimates": {"type": "array", "minItems": 1},
+    "operations": {"type": "array"},
+    "errors": {"type": "array"},
+    "actual": {"type": "object"},
+    "completion_report": {"type": ["string", "null"]}
+  }
+}

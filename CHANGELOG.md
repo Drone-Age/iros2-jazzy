@@ -1,6 +1,16 @@
 # Changelog
 
-## Process 1.2.0 (unreleased)
+## Process 1.3.0
+
+- Made ClickUp time estimates and start/stop time tracking mandatory.
+- Added calibrated P50/P80 estimation, confidence, machine wait, external wait,
+  and calendar-duration rules.
+- Added the versioned task/type history, operation/error records, estimation
+  helper, validators, and mandatory completion reports.
+- Added performance optimization guardrails that preserve release gates and
+  require clean-run validation.
+
+## Process 1.2.0
 
 - Added the mandatory GitHub/ClickUp task-management policy.
 - Defined reciprocal linking, source-of-truth ownership, status mapping,

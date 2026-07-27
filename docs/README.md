@@ -16,6 +16,8 @@ mandatory maintained translations.
   [Ukrainian](RELEASE_PROCESS.uk.md)
 - [Task management and cross-session continuity](TASK_MANAGEMENT.md) /
   [Ukrainian](TASK_MANAGEMENT.uk.md)
+- [Estimation, time tracking, and performance](ESTIMATION_AND_PERFORMANCE.md) /
+  [Ukrainian](ESTIMATION_AND_PERFORMANCE.uk.md)
 - [v1 migration plan](V1_MIGRATION_PLAN.md) /
   [Ukrainian](V1_MIGRATION_PLAN.uk.md)
 

@@ -17,3 +17,5 @@ They must:
 Product implementation work must satisfy `docs/PACKAGE_POLICY.md` and
 `docs/RELEASE_PROCESS.md`. Every implementation task must also follow the
 linked GitHub/ClickUp workflow in `docs/TASK_MANAGEMENT.md`.
+Estimation, time tracking, operation/error records, and task completion
+reports must follow `docs/ESTIMATION_AND_PERFORMANCE.md`.
