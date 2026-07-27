@@ -11,8 +11,8 @@
   "versions": {
     "product": "1.0.1",
     "product_tag": "v2.1.0.1",
-    "process": "1.5.7",
-    "process_tag": "process-v1.5.7"
+    "process": "1.5.8",
+    "process_tag": "process-v1.5.8"
   },
   "estimates": [
     {
@@ -192,6 +192,28 @@
       "root_cause": "grep -q exited after its first match and closed dpkg-deb output under pipefail.",
       "correction": "Capture each package listing once and run path checks against the captured text.",
       "prevention": "Prohibit short-circuit grep directly downstream of dpkg-deb in audit scripts.",
+      "tracked_minutes_lost": null,
+      "machine_minutes_lost": 0,
+      "invalidated_evidence": []
+    },
+    {
+      "stage": "native-release-recovery",
+      "category": "premature-build-cleanup",
+      "symptom": "A corrected audit run had to recompile the ROS graph because packaging had already deleted build and log state before downstream gates ran.",
+      "root_cause": "Cleanup was coupled to successful Debian package creation instead of successful completion of the full release pipeline.",
+      "correction": "Defer cleanup until packaging, audit, signing, SBOM, install, and smoke-test gates all pass.",
+      "prevention": "Regression-test that cleanup occurs only after the PASS marker is written.",
+      "tracked_minutes_lost": null,
+      "machine_minutes_lost": 49,
+      "invalidated_evidence": []
+    },
+    {
+      "stage": "task-coordination",
+      "category": "unexpected-terminal-status",
+      "symptom": "The active ClickUp task was briefly observed in Closed while the native release and timer were still active.",
+      "root_cause": "Status mutations lacked an explicit terminal precondition and mandatory post-write verification of status and date_closed.",
+      "correction": "Restored and verified in progress with date_closed null, synchronized completed stages, and published verified ClickUp comment 90150245337520.",
+      "prevention": "Require terminal gate evidence, read-before/write/read-after status handling, automatic non-terminal restoration, and an incident comment for mismatches.",
       "tracked_minutes_lost": null,
       "machine_minutes_lost": 0,
       "invalidated_evidence": []

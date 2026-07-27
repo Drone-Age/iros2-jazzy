@@ -51,6 +51,24 @@ state. Checkpoint comment має визначати цей попередній 
 
 Статус має відображати стан усієї задачі, а не коротку підоперацію агента.
 
+### Безпека зміни статусу
+
+Кожна зміна статусу є контрольованою mutation:
+
+1. прочитайте задачу й зафіксуйте її поточний статус;
+2. підтвердьте, що target є допустимим transition для всієї задачі;
+3. для `complete`, `cancelled` або `closed` вимагайте terminal checkpoint
+   comment і всі completion gates з `TASK_MANAGEMENT.md`;
+4. змінюйте лише поле status;
+5. негайно повторно прочитайте задачу та перевірте `status` і `date_closed`;
+6. якщо з'явився неочікуваний terminal status або closed date, відновіть
+   зафіксований non-terminal status, перевірте відновлення та опублікуйте
+   incident comment перед наступними mutations задачі.
+
+`closed` ніколи не використовується для завершеного етапу, тимчасової паузи,
+закінчення turn агента або успішної підоперації. Automation має зупинитися до
+terminal mutation, якщо terminal gate не може бути доведений.
+
 ## Коментарі до задачі
 
 Коментарі ClickUp є хронологічним coordination log. Description містить
@@ -68,6 +86,11 @@ state. Checkpoint comment має визначати цей попередній 
 - acceptance owner;
 - публікації tag, release, artifact або post-release verification;
 - cancellation або остаточного completion.
+
+Матеріальний етап не вважається зафіксованим як завершений, доки його ClickUp
+checkpoint comment не опубліковано й не перевірено. Checklist задачі та
+comment оновлюються в одному checkpoint; якщо comment publication недоступна,
+етап залишається незавершеним до фіксації fallback evidence.
 
 Не пишіть коментарі для звичайних команд, незмінного polling, проміжного
 прогресу або інформації з попереднього коментаря. Об'єднуйте пов'язані

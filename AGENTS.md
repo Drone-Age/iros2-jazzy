@@ -10,6 +10,12 @@
 - Read `docs/SCRUMNEO.md` before changing a ClickUp task status or posting a
   task comment. Use comments for material chronological checkpoints and verify
   automated comment creation by reading the task activity.
+- Never set `complete`, `cancelled`, or `closed` without the documented
+  terminal gate. After every status write, read back `status` and
+  `date_closed`; restore the prior non-terminal status and record an incident
+  if the result is unexpected.
+- A material stage is not complete in ClickUp until its checklist state and
+  verified checkpoint comment are both present.
 - Read `docs/ESTIMATION_AND_PERFORMANCE.md`. Before task work, ensure the
   ClickUp task has an initial estimate and start its time tracker. Stop the
   tracker when work pauses, waits for external input, or the session ends.

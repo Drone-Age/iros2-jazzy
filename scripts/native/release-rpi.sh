@@ -45,6 +45,7 @@ echo "Stage: build Debian package"
 IROS2_WORKSPACE="${workspace}" \
 IROS2_OUTPUT_DIR="${artifacts}" \
 IROS2_INSTALL_BASE="${install_base}" \
+IROS2_CLEAN_AFTER_PACKAGE=0 \
   bash "${repo_root}/scripts/native/build-package.sh"
 
 echo "Stage: audit Debian packages"
@@ -68,6 +69,13 @@ bash "${repo_root}/scripts/release/verify-native.sh" \
   tee "${artifacts}/install-smoke-test.txt"
 
 printf 'PASS\n' > "${artifacts}/status.txt"
+
+if [[ -d "${workspace}/log" ]]; then
+  tar -C "${workspace}" -czf \
+    "${artifacts}/native-build-logs_$(<"${repo_root}/VERSION").tar.gz" \
+    log
+fi
+bash "${repo_root}/scripts/native/cleanup-build.sh" "${workspace}"
 
 echo "Artifacts:"
 ls -lh \

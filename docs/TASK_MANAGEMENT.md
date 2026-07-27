@@ -59,7 +59,9 @@ Both linked items must identify:
 - evidence links for completed gates.
 
 Do not mark a stage complete merely because code was written. Completion
-requires its stated check or evidence.
+requires its stated check or evidence and a verified chronological ClickUp
+checkpoint comment. A checked stage without that comment is a tracking defect
+and must be corrected at the next safe checkpoint.
 
 ## 4. Status mapping
 
@@ -157,6 +159,14 @@ Before closing linked tasks:
 5. GitHub Issue is closed as completed;
 6. ClickUp checklist is complete and status is `complete`; `closed` may follow
    only as an archival transition.
+
+Terminal status changes require a pre-write gate and post-write verification:
+read and retain the current status, prove every item above, publish the
+terminal comment, write the status, then read back `status` and `date_closed`.
+If the read-back differs from the intended transition, restore the retained
+non-terminal status and record the incident. Never infer authorization for
+`complete`, `cancelled`, or `closed` from finishing a stage or ending a
+session.
 
 Post-release defects create a new linked task and PATCH version. They do not
 reopen or rewrite immutable release history.

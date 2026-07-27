@@ -19,7 +19,7 @@ IROS2_VERSION="${version}" \
 
 echo "Native ARM64 package created in ${output_dir}"
 
-if [[ "${IROS2_CLEAN_AFTER_PACKAGE:-1}" == "1" ]]; then
+if [[ "${IROS2_CLEAN_AFTER_PACKAGE:-0}" == "1" ]]; then
   workspace="${IROS2_WORKSPACE:-$HOME/iros2j-native/work}"
   if [[ -d "${workspace}/log" ]]; then
     tar -C "${workspace}" -czf \

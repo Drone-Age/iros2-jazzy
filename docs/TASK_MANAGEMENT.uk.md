@@ -58,7 +58,9 @@ ClickUp є авторитетним для:
 - evidence links для завершених gate.
 
 Не позначайте етап завершеним лише тому, що написано код. Завершення потребує
-зазначеної перевірки або evidence.
+зазначеної перевірки або evidence та перевіреного хронологічного ClickUp
+checkpoint comment. Позначений етап без такого comment є tracking defect і
+виправляється на наступному безпечному checkpoint.
 
 ## 4. Відповідність статусів
 
@@ -158,6 +160,14 @@ duplicate work items на припущеннях.
 5. GitHub Issue закрита як completed;
 6. ClickUp checklist завершений і status дорівнює `complete`; `closed` може
    слідувати лише як archival transition.
+
+Terminal status changes потребують pre-write gate і post-write verification:
+прочитайте й збережіть поточний status, доведіть виконання всіх пунктів вище,
+опублікуйте terminal comment, змініть status, а потім повторно прочитайте
+`status` і `date_closed`. Якщо результат відрізняється від запланованого
+transition, відновіть збережений non-terminal status і зафіксуйте incident.
+Ніколи не виводьте дозвіл на `complete`, `cancelled` або `closed` із завершення
+етапу чи закінчення session.
 
 Post-release defects створюють нову пов'язану task і PATCH version. Вони не
 відкривають повторно й не переписують immutable release history.

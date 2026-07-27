@@ -52,6 +52,25 @@ is archival and must not hide which terminal outcome occurred.
 Set the status to the current state of the whole task, not an agent's
 short-lived sub-operation.
 
+### Status mutation safety
+
+Every status change is a guarded mutation:
+
+1. read the task and record its current status;
+2. confirm the target is a valid transition for the whole task;
+3. for `complete`, `cancelled`, or `closed`, require a terminal checkpoint
+   comment and every completion gate in `TASK_MANAGEMENT.md`;
+4. write only the intended status field;
+5. immediately read the task again and verify both `status` and `date_closed`;
+6. if an unexpected terminal status or closed date appears, restore the
+   recorded non-terminal status, verify the restoration, and post an incident
+   comment before other task mutations continue.
+
+`closed` must never be used as a shortcut for a finished stage, a temporary
+pause, an agent turn ending, or a successful sub-operation. Automated work
+must fail closed before a terminal mutation when its terminal gate cannot be
+proved.
+
 ## Task comments
 
 ClickUp comments are the chronological coordination log. The description holds
@@ -69,6 +88,11 @@ Write a comment for:
 - owner acceptance;
 - tag, release, artifact, or post-release verification publication;
 - cancellation or final completion.
+
+A material stage is not recorded as complete until its ClickUp checkpoint
+comment is published and verified. Update the task checklist and publish the
+comment in the same checkpoint; if comment publication is unavailable, leave
+the stage unchecked until the documented fallback evidence is recorded.
 
 Do not comment for routine commands, unchanged polling, transient progress, or
 information already in the immediately preceding comment. Aggregate related

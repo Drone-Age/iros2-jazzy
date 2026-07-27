@@ -1,5 +1,17 @@
 # Changelog
 
+## Process 1.5.8
+
+- Deferred native build/log cleanup until every packaging, audit, signing, SBOM,
+  installation, and smoke-test gate has passed.
+- Preserved build intermediates after failures so corrected runs can resume
+  without recompiling the complete ROS graph.
+- Added regression coverage for cleanup ordering.
+- Required verified ClickUp checkpoint comments before marking material stages
+  complete.
+- Added pre-write terminal gates, post-write `status`/`date_closed`
+  verification, and restoration rules for unexpected terminal transitions.
+
 ## Process 1.5.7
 
 - Prevented successful `dpkg-deb` listing operations from being reported as

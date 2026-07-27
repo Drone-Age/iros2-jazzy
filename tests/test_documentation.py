@@ -98,6 +98,9 @@ class DocumentationTests(unittest.TestCase):
             "Comment integration fallback",
             "the editor is cleared",
             "separate comment entry",
+            "Status mutation safety",
+            "verify both `status` and `date_closed`",
+            "not recorded as complete until its ClickUp checkpoint",
         ):
             self.assertIn(required, policy)
 

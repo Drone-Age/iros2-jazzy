@@ -67,6 +67,20 @@ class RepositoryPolicyTests(unittest.TestCase):
         self.assertIn('contents="$(dpkg-deb -c "${deb}")"', audit)
         self.assertNotIn('dpkg-deb -c "${deb}" | grep', audit)
 
+    def test_release_keeps_build_state_until_all_native_gates_pass(self):
+        package = (ROOT / "scripts" / "native" / "build-package.sh").read_text(
+            encoding="utf-8"
+        )
+        release = (ROOT / "scripts" / "native" / "release-rpi.sh").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn('IROS2_CLEAN_AFTER_PACKAGE:-0', package)
+        self.assertIn("IROS2_CLEAN_AFTER_PACKAGE=0", release)
+        self.assertGreater(
+            release.index('scripts/native/cleanup-build.sh'),
+            release.index("printf 'PASS"),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
