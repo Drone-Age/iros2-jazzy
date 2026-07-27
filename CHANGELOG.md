@@ -1,5 +1,14 @@
 # Changelog
 
+## Process 1.5.0
+
+- Added `preparation` for supporting work that does not directly execute the
+  task deliverable.
+- Distinguished preparation from technical analysis, execution planning, and
+  implementation.
+- Required temporary preparation to record and return to the prior delivery
+  state.
+
 ## Process 1.4.0
 
 - Added the normative ScrumNEO task lifecycle for Indra Workspace.

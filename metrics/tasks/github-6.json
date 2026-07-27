@@ -11,8 +11,8 @@
   "versions": {
     "product": "1.0.1",
     "product_tag": "v2.1.0.1",
-    "process": "1.4.0",
-    "process_tag": "process-v1.4.0"
+    "process": "1.5.0",
+    "process_tag": "process-v1.5.0"
   },
   "estimates": [
     {
@@ -83,6 +83,17 @@
       "evidence": "docs/SCRUMNEO.md",
       "reusable": true,
       "summary": "Defined the Indra Workspace status lifecycle, checkpoint comment rules, verification, and connector fallback."
+    },
+    {
+      "stage": "process",
+      "category": "scrumneo-preparation-status",
+      "result": "PASS",
+      "attempt": 1,
+      "duration_minutes": null,
+      "commit": null,
+      "evidence": "docs/SCRUMNEO.md",
+      "reusable": true,
+      "summary": "Added preparation for supporting work and distinguished it from analysis, planning, and direct implementation."
     }
   ],
   "errors": [

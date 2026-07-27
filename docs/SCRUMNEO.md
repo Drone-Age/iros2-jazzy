@@ -10,6 +10,7 @@ GitHub/ClickUp relationship and evidence ownership.
 |---|---|---|
 | Not started | `backlog` | Registered but not yet approved or scheduled. |
 | Not started | `todo` | Approved, estimated, and ready to start. |
+| Active | `preparation` | Supporting process, environment, documentation, access, or coordination work is active but does not directly execute the task deliverable. |
 | Active | `analyse` | Requirements, constraints, risks, or a defect are being investigated. |
 | Active | `planning` | Scope, stages, estimates, acceptance criteria, and owners are being prepared. |
 | Active | `in progress` | Implementation or an execution gate is active. |
@@ -27,14 +28,23 @@ GitHub/ClickUp relationship and evidence ownership.
 The default successful flow is:
 
 ```text
-backlog -> todo -> analyse -> planning -> in progress -> in review
+backlog -> todo -> preparation -> analyse -> planning -> in progress -> in review
         -> completed -> accepted -> complete -> closed
 ```
 
-A task may skip `analyse` or `planning` only when those results already exist
-and are linked. `rejected` returns to `analyse`, `planning`, or `in progress`
-after its reason is understood. `blocked` returns to the state representing
-resumed work. Its comment must identify the prior state and resume condition.
+`preparation` is used only while supporting work is the primary current
+activity, for example establishing regulations, access, tooling, build
+infrastructure, or task coordination. Work that examines the task's technical
+requirements is `analyse`; work that defines its execution stages and
+estimates is `planning`; work that creates the deliverable is `in progress`.
+
+A task may skip `preparation`, `analyse`, or `planning` only when the applicable
+results already exist and are linked or the stage is not needed. `rejected`
+returns to `analyse`, `planning`, or `in progress` after its reason is
+understood. `blocked` returns to the state representing resumed work.
+Temporary `preparation` returns to the prior delivery state when preparation
+finishes. The checkpoint comment must identify that prior state and resume
+condition.
 
 `complete` means successful delivery. `cancelled` means no delivery. `closed`
 is archival and must not hide which terminal outcome occurred.
@@ -92,4 +102,3 @@ the ClickUp comment API fails:
    record the connector limitation in the repository task error log;
 4. retain durable evidence and the full checkpoint in the linked GitHub Issue;
 5. restore the missing ClickUp comment after integration access is repaired.
-

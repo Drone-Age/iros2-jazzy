@@ -82,6 +82,7 @@ class DocumentationTests(unittest.TestCase):
         for required in (
             "`backlog`",
             "`todo`",
+            "`preparation`",
             "`analyse`",
             "`planning`",
             "`in progress`",

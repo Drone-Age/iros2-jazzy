@@ -69,6 +69,7 @@ Use this mapping. Detailed transition rules are in `SCRUMNEO.md`.
 |---|---|---|
 | Proposed | Open Issue without `approved` | `backlog` |
 | Approved, ready to start | Open Issue with `approved` | `todo` |
+| Supporting preparation | Open Issue | `preparation` |
 | Analysis | Open Issue | `analyse` |
 | Planning | Open Issue | `planning` |
 | Active implementation or gate | Open Issue | `in progress` |

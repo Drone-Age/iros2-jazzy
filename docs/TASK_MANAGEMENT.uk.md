@@ -69,6 +69,7 @@ ClickUp є авторитетним для:
 |---|---|---|
 | Запропоновано | Open Issue без `approved` | `backlog` |
 | Затверджено, готово до початку | Open Issue з `approved` | `todo` |
+| Супровідна підготовка | Open Issue | `preparation` |
 | Analysis | Open Issue | `analyse` |
 | Planning | Open Issue | `planning` |
 | Активна реалізація або gate | Open Issue | `in progress` |

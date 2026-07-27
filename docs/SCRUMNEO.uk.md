@@ -10,6 +10,7 @@
 |---|---|---|
 | Not started | `backlog` | Зареєстровано, але ще не затверджено або не заплановано. |
 | Not started | `todo` | Затверджено, оцінено та готово до початку. |
+| Active | `preparation` | Активна супровідна робота з process, environment, documentation, access або coordination, яка безпосередньо не виконує deliverable задачі. |
 | Active | `analyse` | Досліджуються вимоги, обмеження, ризики або defect. |
 | Active | `planning` | Готуються scope, етапи, оцінки, acceptance criteria та owners. |
 | Active | `in progress` | Активна реалізація або execution gate. |
@@ -27,15 +28,23 @@
 Типовий успішний потік:
 
 ```text
-backlog -> todo -> analyse -> planning -> in progress -> in review
+backlog -> todo -> preparation -> analyse -> planning -> in progress -> in review
         -> completed -> accepted -> complete -> closed
 ```
 
-Задача може пропустити `analyse` або `planning` лише тоді, коли їх результати
-вже існують і пов'язані із задачею. Після з'ясування причини `rejected`
-повертається до `analyse`, `planning` або `in progress`. Після `blocked` задача
-повертається до стану поновленої роботи. Comment має визначати попередній
-статус і умову поновлення.
+`preparation` використовується лише тоді, коли основною поточною діяльністю є
+супровідна робота, наприклад створення regulations, access, tooling, build
+infrastructure або task coordination. Дослідження technical requirements
+задачі є `analyse`; визначення execution stages та estimates є `planning`;
+створення deliverable є `in progress`.
+
+Задача може пропустити `preparation`, `analyse` або `planning` лише тоді, коли
+відповідні результати вже існують і пов'язані із задачею або етап не потрібен.
+Після з'ясування причини `rejected` повертається до `analyse`, `planning` або
+`in progress`. Після `blocked` задача повертається до стану поновленої роботи.
+Тимчасовий `preparation` після завершення повертається до попереднього delivery
+state. Checkpoint comment має визначати цей попередній статус і умову
+поновлення.
 
 `complete` означає успішний delivery. `cancelled` означає відсутність delivery.
 `closed` є архівним і не повинен приховувати terminal outcome.
@@ -92,4 +101,3 @@ Estimate impact: none або уточнені P50/P80 з причиною
    обмеження connector до repository task error log;
 4. збережіть durable evidence і повний checkpoint у пов'язаній GitHub Issue;
 5. відновіть відсутній ClickUp comment після виправлення integration access.
-
