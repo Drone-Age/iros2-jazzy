@@ -54,12 +54,13 @@ fi
 if [ -f '$remoteRoot/pid' ] && kill -0 `$(cat '$remoteRoot/pid') 2>/dev/null; then
   exit 0
 fi
+remote_root_abs=`$(cd '$remoteRoot' && pwd)
 (
   set +e
   cd '$remoteRoot/repo'
   env IROS2_INSTALL_DEPENDENCIES=1 $gpgEnvironment bash scripts/native/release-rpi.sh
   rc=`$?
-  echo "`$rc" > '$remoteRoot/exit-code'
+  echo "`$rc" > "`$remote_root_abs/exit-code"
   exit "`$rc"
 ) > '$remoteRoot/run.log' 2>&1 < /dev/null &
 echo `$! > '$remoteRoot/pid'

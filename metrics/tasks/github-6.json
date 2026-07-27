@@ -11,8 +11,8 @@
   "versions": {
     "product": "1.0.1",
     "product_tag": "v2.1.0.1",
-    "process": "1.5.3",
-    "process_tag": "process-v1.5.3"
+    "process": "1.5.4",
+    "process_tag": "process-v1.5.4"
   },
   "estimates": [
     {
@@ -141,6 +141,28 @@
     }
   ],
   "errors": [
+    {
+      "stage": "native-packaging",
+      "category": "vendor-package-discovery",
+      "symptom": "All 251 ROS packages compiled successfully, but Debian packaging treated gmock_vendor as an external rosdep key unsupported on Debian Trixie.",
+      "root_cause": "The inventory discovered isolated prefixes only through share/ament_index; six valid vendor packages intentionally omit that directory.",
+      "correction": "Discover isolated packages by their installed package.xml and classify their dependencies as internal.",
+      "prevention": "Regression-test an internal vendor package without an ament-index directory.",
+      "tracked_minutes_lost": null,
+      "machine_minutes_lost": 0,
+      "invalidated_evidence": []
+    },
+    {
+      "stage": "native-dispatch",
+      "category": "relative-exit-record-path",
+      "symptom": "After the packaging failure, the dispatcher could not write the native run exit-code record.",
+      "root_cause": "The exit-code path was relative and the worker subshell had changed into the cloned repository.",
+      "correction": "Resolve the remote run root to an absolute path before entering the worker subshell.",
+      "prevention": "Require dispatcher regression coverage for an absolute exit-code destination.",
+      "tracked_minutes_lost": null,
+      "machine_minutes_lost": 0,
+      "invalidated_evidence": []
+    },
     {
       "stage": "task-linking",
       "category": "integration-permission",

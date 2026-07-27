@@ -18,10 +18,15 @@ PACKAGE_XML = """\
 
 
 def create_package(
-    install_base: Path, name: str, dependencies: tuple[str, ...] = (), elf: bool = False
+    install_base: Path,
+    name: str,
+    dependencies: tuple[str, ...] = (),
+    elf: bool = False,
+    ament_index: bool = True,
 ) -> None:
     prefix = install_base / name
-    (prefix / "share" / "ament_index").mkdir(parents=True)
+    if ament_index:
+        (prefix / "share" / "ament_index").mkdir(parents=True)
     package_share = prefix / "share" / name
     package_share.mkdir(parents=True)
     dependency_xml = "\n  ".join(
@@ -65,6 +70,35 @@ class PackageMetadataTests(unittest.TestCase):
             self.assertEqual(
                 packages["demo_nodes_cpp"].external_dependencies,
                 ("external_system_dependency",),
+            )
+
+    def test_inventory_includes_vendor_package_without_ament_index(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            install_base = Path(temporary)
+            create_package(
+                install_base,
+                "gmock_vendor",
+                ament_index=False,
+            )
+            create_package(
+                install_base,
+                "ament_cmake_gmock",
+                dependencies=("gmock_vendor",),
+            )
+
+            packages = {
+                package.ros_name: package
+                for package in inventory(install_base, "1.0.1-1+deb13")
+            }
+
+            self.assertIn("gmock_vendor", packages)
+            self.assertEqual(
+                packages["ament_cmake_gmock"].dependencies,
+                ("iros2j-gmock-vendor (= 1.0.1-1+deb13)",),
+            )
+            self.assertEqual(
+                packages["ament_cmake_gmock"].external_dependencies,
+                (),
             )
 
 

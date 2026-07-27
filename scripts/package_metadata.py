@@ -88,7 +88,11 @@ def inventory(install_base: Path, version: str) -> list[Package]:
     prefixes = sorted(
         path
         for path in install_base.iterdir()
-        if path.is_dir() and (path / "share" / "ament_index").exists()
+        if path.is_dir()
+        and (
+            (path / "share" / path.name / "package.xml").is_file()
+            or (path / "share" / path.name / "package.xml.installspace").is_file()
+        )
     )
     ros_names = {path.name for path in prefixes}
     packages: list[Package] = []

@@ -51,6 +51,8 @@ class RepositoryPolicyTests(unittest.TestCase):
         )
         self.assertNotIn('nohup sh -c', dispatcher)
         self.assertIn('rc=`$?', dispatcher)
+        self.assertIn('remote_root_abs=`$(cd', dispatcher)
+        self.assertIn('> "`$remote_root_abs/exit-code"', dispatcher)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,13 @@
 # Changelog
 
+## Process 1.5.4
+
+- Included isolated vendor packages that intentionally omit an ament-index
+  directory in the Debian package inventory.
+- Made native-run exit-code recording independent of the subshell working
+  directory.
+- Added regression coverage for both native packaging and dispatch failures.
+
 ## Process 1.5.3
 
 - Normalized Windows PowerShell CRLF input before remote Bash execution.
